@@ -31,6 +31,12 @@ namespace Tests.Performance
         }
 
         [Benchmark]
+        public object GetAlma()
+        {
+            return Indicator.GetAlma(h);
+        }
+
+        [Benchmark]
         public object GetAroon()
         {
             return Indicator.GetAroon(h);
@@ -178,6 +184,12 @@ namespace Tests.Performance
         public object GetParabolicSar()
         {
             return Indicator.GetParabolicSar(h);
+        }
+
+        [Benchmark]
+        public object GetPivotPoints()
+        {
+            return Indicator.GetPivotPoints(h, PeriodSize.Month, PivotPointType.Standard);
         }
 
         [Benchmark]
