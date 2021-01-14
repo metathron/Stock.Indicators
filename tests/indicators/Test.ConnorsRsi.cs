@@ -7,18 +7,20 @@ using System.Linq;
 namespace Internal.Tests
 {
     [TestClass]
-    public class ConnorsRsiTests : TestBase
+    public class ConnorsRsi : TestBase
     {
 
         [TestMethod()]
-        public void GetConnorsRsi()
+        public void Standard()
         {
             int rsiPeriod = 3;
             int streakPeriod = 2;
             int rankPeriod = 100;
             int startPeriod = Math.Max(rsiPeriod, Math.Max(streakPeriod, rankPeriod)) + 2;
 
-            List<ConnorsRsiResult> results1 = Indicator.GetConnorsRsi(history, rsiPeriod, streakPeriod, rankPeriod).ToList();
+            List<ConnorsRsiResult> results1 = 
+                Indicator.GetConnorsRsi(history, rsiPeriod, streakPeriod, rankPeriod)
+                .ToList();
 
             // assertions
 
@@ -41,46 +43,47 @@ namespace Internal.Tests
             Assert.AreEqual(52.7386m, Math.Round((decimal)r2.RsiStreak, 4));
             Assert.AreEqual(90.0000m, Math.Round((decimal)r2.PercentRank, 4));
             Assert.AreEqual(61.6053m, Math.Round((decimal)r2.ConnorsRsi, 4));
-
         }
 
         [TestMethod()]
-        public void GetConnorsRsiBadData()
+        public void BadData()
         {
             IEnumerable<ConnorsRsiResult> r = Indicator.GetConnorsRsi(historyBad, 4, 3, 25);
             Assert.AreEqual(502, r.Count());
         }
 
-
-        /* EXCEPTIONS */
-
         [TestMethod()]
-        [ExpectedException(typeof(ArgumentOutOfRangeException), "Bad RSI period.")]
-        public void BadRsiPeriod()
+        public void Convergence()
         {
-            Indicator.GetConnorsRsi(history, 1, 2, 100);
+            foreach (int qty in convergeQuantities)
+            {
+                IEnumerable<Quote> h = HistoryTestData.GetLong(103 + qty);
+                IEnumerable<ConnorsRsiResult> r = Indicator.GetConnorsRsi(h, 3, 2, 10);
+
+                ConnorsRsiResult l = r.LastOrDefault();
+                Console.WriteLine("CRSI on {0:d} with {1,4} periods: {2:N8}",
+                    l.Date, h.Count(), l.ConnorsRsi);
+            }
         }
 
         [TestMethod()]
-        [ExpectedException(typeof(ArgumentOutOfRangeException), "Bad Streak period.")]
-        public void BadStreakPeriod()
+        public void Exceptions()
         {
-            Indicator.GetConnorsRsi(history, 3, 1, 100);
-        }
+            // bad RSI period
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
+                Indicator.GetConnorsRsi(history, 1, 2, 100));
 
-        [TestMethod()]
-        [ExpectedException(typeof(ArgumentOutOfRangeException), "Bad Rank period.")]
-        public void BadPctRankPeriod()
-        {
-            Indicator.GetConnorsRsi(history, 3, 2, 1);
-        }
+            // bad Streak period
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
+                Indicator.GetConnorsRsi(history, 3, 1, 100));
 
-        [TestMethod()]
-        [ExpectedException(typeof(BadHistoryException), "Insufficient history.")]
-        public void InsufficientHistory()
-        {
-            IEnumerable<Quote> h = History.GetHistory(101);
-            Indicator.GetConnorsRsi(h, 3, 2, 100);
+            // bad Rank period
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
+                Indicator.GetConnorsRsi(history, 3, 2, 1));
+
+            // insufficient history
+            Assert.ThrowsException<BadHistoryException>(() =>
+                Indicator.GetConnorsRsi(HistoryTestData.Get(102), 3, 2, 100));
         }
 
     }

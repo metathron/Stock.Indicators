@@ -7,14 +7,16 @@ using System.Linq;
 namespace Internal.Tests
 {
     [TestClass]
-    public class TemaTests : TestBase
+    public class TripleEma : TestBase
     {
 
         [TestMethod()]
-        public void GetTripleEma()
+        public void Standard()
         {
             int lookbackPeriod = 20;
-            List<EmaResult> results = Indicator.GetTripleEma(history, lookbackPeriod).ToList();
+
+            List<EmaResult> results = Indicator.GetTripleEma(history, lookbackPeriod)
+                .ToList();
 
             // assertions
 
@@ -24,47 +26,52 @@ namespace Internal.Tests
             Assert.AreEqual(445, results.Where(x => x.Ema != null).Count());
 
             // sample values
-            EmaResult r1 = results[501];
-            Assert.AreEqual(238.7690m, Math.Round((decimal)r1.Ema, 4));
+            EmaResult r1 = results[67];
+            Assert.AreEqual(222.9105m, Math.Round((decimal)r1.Ema, 4));
 
             EmaResult r2 = results[249];
             Assert.AreEqual(258.6208m, Math.Round((decimal)r2.Ema, 4));
 
-            EmaResult r3 = results[67];
-            Assert.AreEqual(222.9105m, Math.Round((decimal)r3.Ema, 4));
+            EmaResult r3 = results[501];
+            Assert.AreEqual(238.7690m, Math.Round((decimal)r3.Ema, 4));
         }
 
         [TestMethod()]
-        public void GetTripleEmaBadData()
+        public void BadData()
         {
             IEnumerable<EmaResult> r = Indicator.GetTripleEma(historyBad, 15);
             Assert.AreEqual(502, r.Count());
         }
 
-
-        /* EXCEPTIONS */
-
         [TestMethod()]
-        [ExpectedException(typeof(ArgumentOutOfRangeException), "Bad lookback.")]
-        public void BadLookbackPeriod()
+        public void Convergence()
         {
-            Indicator.GetTripleEma(history, 0);
+            foreach (int qty in convergeQuantities)
+            {
+                IEnumerable<Quote> h = HistoryTestData.GetLong(145 + qty);
+                IEnumerable<EmaResult> r = Indicator.GetTripleEma(h, 15);
+
+                EmaResult l = r.LastOrDefault();
+                Console.WriteLine("TEMA on {0:d} with {1,4} periods: {2:N8}",
+                    l.Date, h.Count(), l.Ema);
+            }
         }
 
         [TestMethod()]
-        [ExpectedException(typeof(BadHistoryException), "Insufficient history for 3*N+100.")]
-        public void InsufficientHistoryA()
+        public void Exceptions()
         {
-            IEnumerable<Quote> h = History.GetHistory(189);
-            Indicator.GetTripleEma(h, 30);
+            // bad lookback period
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
+                Indicator.GetTripleEma(history, 0));
+
+            // insufficient history for 3*N+100
+            Assert.ThrowsException<BadHistoryException>(() =>
+                Indicator.GetTripleEma(HistoryTestData.Get(189), 30));
+
+            // insufficient history for 4×N
+            Assert.ThrowsException<BadHistoryException>(() =>
+                Indicator.GetTripleEma(HistoryTestData.GetLong(999), 250));
         }
 
-        [TestMethod()]
-        [ExpectedException(typeof(BadHistoryException), "Insufficient history for 4×N.")]
-        public void InsufficientHistoryB()
-        {
-            IEnumerable<Quote> historyLong = History.GetHistoryLong(999);
-            Indicator.GetTripleEma(historyLong, 250);
-        }
     }
 }

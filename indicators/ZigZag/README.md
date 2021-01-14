@@ -7,14 +7,15 @@
 
 ```csharp
 // usage
-IEnumerable<ZigZagResult> results = Indicator.GetZigZag(history, type, percentChange);  
+IEnumerable<ZigZagResult> results =
+  Indicator.GetZigZag(history, type, percentChange);  
 ```
 
 ## Parameters
 
 | name | type | notes
 | -- |-- |--
-| `history` | IEnumerable\<[TQuote](../../docs/GUIDE.md#quote)\> | Historical price quotes should have a consistent frequency (day, hour, minute, etc).
+| `history` | IEnumerable\<[TQuote](../../docs/GUIDE.md#historical-quotes)\> | Historical price quotes should have a consistent frequency (day, hour, minute, etc).
 | `type` | ZigZagType | Determines whether `Close` or `High/Low` are used to measure percent change.  See [ZigZagType options](#zigzagtype-options) below.  Default is `ZigZagType.Close`.
 | `percentChange` | decimal | Percent change required to establish a line endpoint.  Example: 3.5% would be entered as 3.5 (not 0.035).  Must be greater than 0.  Typical values range from 3 to 10.  Default is 5.
 
@@ -54,7 +55,8 @@ If you do not supply enough points to cover the percent change, there will be no
 IEnumerable<Quote> history = GetHistoryFromFeed("SPY");
 
 // calculate 3% change ZIGZAG
-IEnumerable<ZigZagResult> results = Indicator.GetZigZag(history,ZigZagType.Close,3);
+IEnumerable<ZigZagResult> results =
+  Indicator.GetZigZag(history,ZigZagType.Close,3);
 
 // use results as needed
 ZigZagResult result = results.LastOrDefault();

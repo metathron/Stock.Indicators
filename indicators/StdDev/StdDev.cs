@@ -14,7 +14,7 @@ namespace Skender.Stock.Indicators
         {
 
             // convert to basic data
-            List<BasicData> bd = Cleaners.ConvertHistoryToBasic(history, "C");
+            List<BasicData> bd = history.ConvertToBasic("C");
 
             // calculate
             return CalcStdDev(bd, lookbackPeriod, smaPeriod);
@@ -25,13 +25,13 @@ namespace Skender.Stock.Indicators
             List<BasicData> bdList, int lookbackPeriod, int? smaPeriod = null)
         {
 
-            // validate inputs
+            // check parameter arguments
             ValidateStdDev(bdList, lookbackPeriod, smaPeriod);
 
-            // initialize results
+            // initialize
             List<StdDevResult> results = new List<StdDevResult>(bdList.Count);
 
-            // roll through history and compute lookback standard deviation
+            // roll through history
             for (int i = 0; i < bdList.Count; i++)
             {
                 BasicData bd = bdList[i];
@@ -59,6 +59,7 @@ namespace Skender.Stock.Indicators
                     decimal periodAvg = sum / lookbackPeriod;
 
                     result.StdDev = (decimal)Functions.StdDev(periodValues);
+                    result.Mean = periodAvg;
 
                     result.ZScore = (result.StdDev == 0) ? null
                         : (bd.Value - periodAvg) / result.StdDev;
@@ -75,7 +76,7 @@ namespace Skender.Stock.Indicators
                         sumSma += (decimal)results[p].StdDev;
                     }
 
-                    result.Sma = sumSma / smaPeriod;
+                    result.StdDevSma = sumSma / smaPeriod;
                 }
             }
 
@@ -83,10 +84,13 @@ namespace Skender.Stock.Indicators
         }
 
 
-        private static void ValidateStdDev(List<BasicData> history, int lookbackPeriod, int? smaPeriod)
+        private static void ValidateStdDev(
+            List<BasicData> history,
+            int lookbackPeriod,
+            int? smaPeriod)
         {
 
-            // check parameters
+            // check parameter arguments
             if (lookbackPeriod <= 1)
             {
                 throw new ArgumentOutOfRangeException(nameof(lookbackPeriod), lookbackPeriod,
@@ -111,10 +115,7 @@ namespace Skender.Stock.Indicators
 
                 throw new BadHistoryException(nameof(history), message);
             }
-
         }
+
     }
-
-
-
 }

@@ -7,11 +7,11 @@ using System.Linq;
 namespace Internal.Tests
 {
     [TestClass]
-    public class AlmaTests : TestBase
+    public class Alma : TestBase
     {
 
         [TestMethod()]
-        public void GetAlma()
+        public void Standard()
         {
             int lookbackPeriod = 10;
             double offset = 0.85;
@@ -28,62 +28,50 @@ namespace Internal.Tests
             Assert.AreEqual(493, results.Where(x => x.Alma != null).Count());
 
             // sample values
-            AlmaResult r1 = results[501];
-            Assert.AreEqual(242.1871m, Math.Round((decimal)r1.Alma, 4));
+            AlmaResult r1 = results[8];
+            Assert.AreEqual(null, r1.Alma);
 
-            AlmaResult r2 = results[249];
-            Assert.AreEqual(257.5787m, Math.Round((decimal)r2.Alma, 4));
+            AlmaResult r2 = results[9];
+            Assert.AreEqual(214.1839m, Math.Round((decimal)r2.Alma, 4));
 
-            AlmaResult r3 = results[149];
-            Assert.AreEqual(235.8609m, Math.Round((decimal)r3.Alma, 4));
+            AlmaResult r3 = results[24];
+            Assert.AreEqual(216.0619m, Math.Round((decimal)r3.Alma, 4));
 
-            AlmaResult r4 = results[24];
-            Assert.AreEqual(216.0619m, Math.Round((decimal)r4.Alma, 4));
+            AlmaResult r4 = results[149];
+            Assert.AreEqual(235.8609m, Math.Round((decimal)r4.Alma, 4));
 
-            AlmaResult r5 = results[9];
-            Assert.AreEqual(214.1839m, Math.Round((decimal)r5.Alma, 4));
+            AlmaResult r5 = results[249];
+            Assert.AreEqual(257.5787m, Math.Round((decimal)r5.Alma, 4));
 
-            AlmaResult r6 = results[8];
-            Assert.AreEqual(null, r6.Alma);
+            AlmaResult r6 = results[501];
+            Assert.AreEqual(242.1871m, Math.Round((decimal)r6.Alma, 4));
         }
 
         [TestMethod()]
-        public void GetAlmaBadData()
+        public void BadData()
         {
             IEnumerable<AlmaResult> r = Indicator.GetAlma(historyBad, 14, 0.5, 3);
             Assert.AreEqual(502, r.Count());
         }
 
-
-        /* EXCEPTIONS */
-
         [TestMethod()]
-        [ExpectedException(typeof(ArgumentOutOfRangeException), "Bad Lookback period.")]
-        public void BadLookbackPeriod()
+        public void Exceptions()
         {
-            Indicator.GetAlma(history, 0, 1, 5);
-        }
+            // bad lookback period
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
+                Indicator.GetAlma(history, 0, 1, 5));
 
-        [TestMethod()]
-        [ExpectedException(typeof(ArgumentOutOfRangeException), "Bad Offset.")]
-        public void BadOffset()
-        {
-            Indicator.GetAlma(history, 15, 1.1, 3);
-        }
+            // bad offset
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
+                Indicator.GetAlma(history, 15, 1.1, 3));
 
-        [TestMethod()]
-        [ExpectedException(typeof(ArgumentOutOfRangeException), "Bad Signma.")]
-        public void BadSigma()
-        {
-            Indicator.GetAlma(history, 10, 0.5, 0);
-        }
+            // bad sigma
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
+                Indicator.GetAlma(history, 10, 0.5, 0));
 
-        [TestMethod()]
-        [ExpectedException(typeof(BadHistoryException), "Insufficient history.")]
-        public void InsufficientHistory()
-        {
-            IEnumerable<Quote> h = History.GetHistory(10);
-            Indicator.GetAlma(h, 11, 0.5);
+            // insufficient history
+            Assert.ThrowsException<BadHistoryException>(() =>
+                Indicator.GetAlma(HistoryTestData.Get(10), 11, 0.5));
         }
 
     }

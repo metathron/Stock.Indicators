@@ -7,14 +7,15 @@ Created by John Bollinger, [Bollinger Bands](https://en.wikipedia.org/wiki/Bolli
 
 ```csharp
 // usage
-IEnumerable<BollingerBandsResult> results = Indicator.GetBollingerBands(history, lookbackPeriod, standardDeviation);  
+IEnumerable<BollingerBandsResult> results =
+  Indicator.GetBollingerBands(history, lookbackPeriod, standardDeviation);  
 ```
 
 ## Parameters
 
 | name | type | notes
 | -- |-- |--
-| `history` | IEnumerable\<[TQuote](../../docs/GUIDE.md#quote)\> | Historical price quotes should have a consistent frequency (day, hour, minute, etc).
+| `history` | IEnumerable\<[TQuote](../../docs/GUIDE.md#historical-quotes)\> | Historical price quotes should have a consistent frequency (day, hour, minute, etc).
 | `lookbackPeriod` | int | Number of periods (`N`) for the center line moving average.  Must be greater than 1 to calculate; however we suggest a larger period for statistically appropriate sample size.  Default is 20.
 | `standardDeviation` | int | Width of bands.  Standard deviations (`D`) from the moving average.  Must be greater than 0.  Default is 2.
 
@@ -49,11 +50,13 @@ The first `N-1` periods will have `null` values since there's not enough data to
 IEnumerable<Quote> history = GetHistoryFromFeed("SPY");
 
 // calculate BollingerBands(12,26,9)
-IEnumerable<BollingerBandsResult> results = Indicator.GetBollingerBands(history,20,2);
+IEnumerable<BollingerBandsResult> results =
+  Indicator.GetBollingerBands(history,20,2);
 
 // use results as needed
 BollingerBandsResult result = results.LastOrDefault();
-Console.WriteLine("Upper Bollinger Band on {0} was ${1}", result.Date, result.UpperBand);
+Console.WriteLine("Upper Bollinger Band on {0} was ${1}",
+  result.Date, result.UpperBand);
 ```
 
 ```bash

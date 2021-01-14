@@ -7,14 +7,16 @@ using System.Linq;
 namespace Internal.Tests
 {
     [TestClass]
-    public class SmaTests : TestBase
+    public class Sma : TestBase
     {
 
         [TestMethod()]
-        public void GetSma()
+        public void Standard()
         {
             int lookbackPeriod = 20;
-            List<SmaResult> results = Indicator.GetSma(history, lookbackPeriod, true).ToList();
+
+            List<SmaResult> results = Indicator.GetSma(history, lookbackPeriod, true)
+                .ToList();
 
             // assertions
 
@@ -32,28 +34,23 @@ namespace Internal.Tests
         }
 
         [TestMethod()]
-        public void GetSmaBadData()
+        public void BadData()
         {
             IEnumerable<SmaResult> r = Indicator.GetSma(historyBad, 15, true);
             Assert.AreEqual(502, r.Count());
         }
 
-
-        /* EXCEPTIONS */
-
         [TestMethod()]
-        [ExpectedException(typeof(ArgumentOutOfRangeException), "Bad lookback.")]
-        public void BadLookbackPeriod()
+        public void Exceptions()
         {
-            Indicator.GetSma(history, 0);
+            // bad lookback period
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
+                Indicator.GetSma(history, 0));
+
+            // insufficient history
+            Assert.ThrowsException<BadHistoryException>(() =>
+                Indicator.GetSma(HistoryTestData.Get(9), 10));
         }
 
-        [TestMethod()]
-        [ExpectedException(typeof(BadHistoryException), "Insufficient history.")]
-        public void InsufficientHistory()
-        {
-            IEnumerable<Quote> h = History.GetHistory(9);
-            Indicator.GetSma(h, 10);
-        }
     }
 }

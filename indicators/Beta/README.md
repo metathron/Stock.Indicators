@@ -7,15 +7,16 @@
 
 ```csharp
 // usage
-IEnumerable<BetaResult> results = Indicator.GetBeta(historyMarket, historyEval, lookbackPeriod);  
+IEnumerable<BetaResult> results =
+  Indicator.GetBeta(historyMarket, historyEval, lookbackPeriod);  
 ```
 
 ## Parameters
 
 | name | type | notes
 | -- |-- |--
-| `historyMarket` | IEnumerable\<[TQuote](../../docs/GUIDE.md#quote)\> | Historical [market] Quotes data should be at any consistent frequency (day, hour, minute, etc).  This `market` history will be used to establish the baseline.
-| `historyEval` | IEnumerable\<[TQuote](../../docs/GUIDE.md#quote)\> | Historical [evaluation stock] Quotes data should be at any consistent frequency (day, hour, minute, etc).
+| `historyMarket` | IEnumerable\<[TQuote](../../docs/GUIDE.md#historical-quotes)\> | Historical [market] Quotes data should be at any consistent frequency (day, hour, minute, etc).  This `market` history will be used to establish the baseline.
+| `historyEval` | IEnumerable\<[TQuote](../../docs/GUIDE.md#historical-quotes)\> | Historical [evaluation stock] Quotes data should be at any consistent frequency (day, hour, minute, etc).
 | `lookbackPeriod` | int | Number of periods (`N`) in the lookback period.  Must be greater than 0 to calculate; however we suggest a larger period for statistically appropriate sample size.
 
 ### Minimum history requirements
@@ -45,11 +46,13 @@ IEnumerable<Quote> historyTSLA = GetHistoryFromFeed("TSLA");
 IEnumerable<Quote> historySPX = GetHistoryFromFeed("SPX");
 
 // calculate 20-period Beta coefficient
-IEnumerable<BetaResult> results = Indicator.GetBeta(historySPX,historyTSLA,20);
+IEnumerable<BetaResult> results =
+  Indicator.GetBeta(historySPX,historyTSLA,20);
 
 // use results as needed
 BetaResult result = results.LastOrDefault();
-Console.WriteLine("Beta(SPX,TSLA,20) on {0} was {1}", result.Date, result.Beta);
+Console.WriteLine("Beta(SPX,TSLA,20) on {0} was {1}",
+  result.Date, result.Beta);
 ```
 
 ```bash

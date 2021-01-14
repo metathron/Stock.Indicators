@@ -13,7 +13,7 @@ namespace Skender.Stock.Indicators
         {
 
             // convert history to basic format
-            List<BasicData> bd = Cleaners.ConvertHistoryToBasic(history, "C");
+            List<BasicData> bd = history.ConvertToBasic("C");
 
             // calculate
             return CalcRsi(bd, lookbackPeriod);
@@ -23,14 +23,18 @@ namespace Skender.Stock.Indicators
         private static IEnumerable<RsiResult> CalcRsi(List<BasicData> bdList, int lookbackPeriod = 14)
         {
 
-            // check parameters
+            // check parameter arguments
             ValidateRsi(bdList, lookbackPeriod);
 
             // initialize
             decimal lastValue = bdList[0].Value;
             decimal avgGain = 0m;
             decimal avgLoss = 0m;
-            List<RsiResult> results = new List<RsiResult>(bdList.Count);
+
+            int size = bdList.Count;
+            List<RsiResult> results = new List<RsiResult>(size);
+            decimal[] gain = new decimal[size]; // gain
+            decimal[] loss = new decimal[size]; // loss
 
             // roll through history
             for (int i = 0; i < bdList.Count; i++)
@@ -40,18 +44,19 @@ namespace Skender.Stock.Indicators
 
                 RsiResult r = new RsiResult
                 {
-                    Date = h.Date,
-                    Gain = (h.Value > lastValue) ? h.Value - lastValue : 0,
-                    Loss = (h.Value < lastValue) ? lastValue - h.Value : 0
+                    Date = h.Date
                 };
                 results.Add(r);
+
+                gain[i] = (h.Value > lastValue) ? h.Value - lastValue : 0;
+                loss[i] = (h.Value < lastValue) ? lastValue - h.Value : 0;
                 lastValue = h.Value;
 
                 // calculate RSI
                 if (index > lookbackPeriod + 1)
                 {
-                    avgGain = (avgGain * (lookbackPeriod - 1) + r.Gain) / lookbackPeriod;
-                    avgLoss = (avgLoss * (lookbackPeriod - 1) + r.Loss) / lookbackPeriod;
+                    avgGain = (avgGain * (lookbackPeriod - 1) + gain[i]) / lookbackPeriod;
+                    avgLoss = (avgLoss * (lookbackPeriod - 1) + loss[i]) / lookbackPeriod;
 
                     if (avgLoss > 0)
                     {
@@ -72,9 +77,8 @@ namespace Skender.Stock.Indicators
 
                     for (int p = 1; p <= lookbackPeriod; p++)
                     {
-                        RsiResult d = results[p];
-                        sumGain += d.Gain;
-                        sumLoss += d.Loss;
+                        sumGain += gain[p];
+                        sumLoss += loss[p];
                     }
                     avgGain = sumGain / lookbackPeriod;
                     avgLoss = sumLoss / lookbackPeriod;
@@ -87,10 +91,12 @@ namespace Skender.Stock.Indicators
         }
 
 
-        private static void ValidateRsi(List<BasicData> history, int lookbackPeriod)
+        private static void ValidateRsi(
+            List<BasicData> history,
+            int lookbackPeriod)
         {
 
-            // check parameters
+            // check parameter arguments
             if (lookbackPeriod < 1)
             {
                 throw new ArgumentOutOfRangeException(nameof(lookbackPeriod), lookbackPeriod,
@@ -99,7 +105,7 @@ namespace Skender.Stock.Indicators
 
             // check history
             int qtyHistory = history.Count;
-            int minHistory = lookbackPeriod + 50;
+            int minHistory = lookbackPeriod + 100;
             if (qtyHistory < minHistory)
             {
                 string message = "Insufficient history provided for RSI.  " +
@@ -107,12 +113,12 @@ namespace Skender.Stock.Indicators
                     "You provided {0} periods of history when at least {1} is required.  "
                     + "Since this uses a smoothing technique, "
                     + "we recommend you use at least {2} data points prior to the intended "
-                    + "usage date for maximum precision.",
+                    + "usage date for better precision.",
                     qtyHistory, minHistory, Math.Max(10 * lookbackPeriod, minHistory));
 
                 throw new BadHistoryException(nameof(history), message);
             }
         }
-    }
 
+    }
 }

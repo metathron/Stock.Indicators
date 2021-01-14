@@ -14,7 +14,7 @@ IEnumerable<StochRsiResult> results = Indicator.GetStochRsi(history, rsiPeriod, 
 
 | name | type | notes
 | -- |-- |--
-| `history` | IEnumerable\<[TQuote](../../docs/GUIDE.md#quote)\> | Historical price quotes should have a consistent frequency (day, hour, minute, etc).
+| `history` | IEnumerable\<[TQuote](../../docs/GUIDE.md#historical-quotes)\> | Historical price quotes should have a consistent frequency (day, hour, minute, etc).
 | `rsiPeriod` | int | Number of periods (`R`) in the lookback period.  Must be greater than 0.  Standard is 14.
 | `stochPeriod` | int | Number of periods (`S`) in the lookback period.  Must be greater than 0.  Typically the same value as `rsiPeriod`.
 | `signalPeriod` | int | Number of periods (`G`) in the signal line (SMA of the StochRSI).  Must be greater than 0.  Typically 3-5.
@@ -24,7 +24,7 @@ The original Stochasic RSI formula uses a the Fast variant of the Stochastic cal
 
 ### Minimum history requirements
 
-You must supply at least `R+S` periods of `history`.  Since this uses a smoothing technique in the underlying RSI value, we recommend you use at least 250 periods prior to the intended usage date for greater precision.
+You must supply at least `N` periods of `history`, where `N` is the greater of `R+S` and `R+100`.  Since this uses a smoothing technique in the underlying RSI value, we recommend you use at least `10×R` periods prior to the intended usage date for better precision.
 
 ## Response
 
@@ -33,6 +33,8 @@ IEnumerable<StochRsiResult>
 ```
 
 The first `R+S-1` periods will have `null` values for `StochRsi` since there's not enough data to calculate.  We always return the same number of elements as there are in the historical quotes.
+
+:warning: **Warning**: The first `10×R` periods will have decreasing magnitude, convergence-related precision errors that can be as high as ~5% deviation in indicator values for earlier periods.
 
 ### StochRsiResult
 

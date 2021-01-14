@@ -7,14 +7,15 @@ using System.Linq;
 namespace Internal.Tests
 {
     [TestClass]
-    public class HeikinAshiTests : TestBase
+    public class HeikinAshi : TestBase
     {
 
         [TestMethod()]
-        public void GetHeikinAshi()
+        public void Standard()
         {
 
-            List<HeikinAshiResult> results = Indicator.GetHeikinAshi(history).ToList();
+            List<HeikinAshiResult> results = Indicator.GetHeikinAshi(history)
+                .ToList();
 
             // assertions
 
@@ -30,21 +31,18 @@ namespace Internal.Tests
         }
 
         [TestMethod()]
-        public void GetHeikinAshiBadData()
+        public void BadData()
         {
             IEnumerable<HeikinAshiResult> r = Indicator.GetHeikinAshi(historyBad);
             Assert.AreEqual(502, r.Count());
         }
 
-
-        /* EXCEPTIONS */
-
         [TestMethod()]
-        [ExpectedException(typeof(BadHistoryException), "Insufficient history.")]
-        public void InsufficientHistory()
+        public void Exceptions()
         {
-            IEnumerable<Quote> h = History.GetHistory(1);
-            Indicator.GetHeikinAshi(h);
+            // insufficient history
+            Assert.ThrowsException<BadHistoryException>(() =>
+                Indicator.GetHeikinAshi(HistoryTestData.Get(1)));
         }
 
     }

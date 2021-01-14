@@ -16,7 +16,7 @@ namespace Skender.Stock.Indicators
             where TQuote : IQuote
         {
 
-            // validate parameters
+            // check parameter arguments
             ValidateStochRsi(history, rsiPeriod, stochPeriod, signalPeriod, smoothPeriod);
 
             // initialize
@@ -64,11 +64,16 @@ namespace Skender.Stock.Indicators
         }
 
 
-        private static void ValidateStochRsi<TQuote>(IEnumerable<TQuote> history,
-            int rsiPeriod, int stochPeriod, int signalPeriod, int smoothPeriod) where TQuote : IQuote
+        private static void ValidateStochRsi<TQuote>(
+            IEnumerable<TQuote> history,
+            int rsiPeriod,
+            int stochPeriod,
+            int signalPeriod,
+            int smoothPeriod)
+            where TQuote : IQuote
         {
 
-            // check parameters
+            // check parameter arguments
             if (rsiPeriod <= 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(rsiPeriod), rsiPeriod,
@@ -95,17 +100,20 @@ namespace Skender.Stock.Indicators
 
             // check history
             int qtyHistory = history.Count();
-            int minHistory = rsiPeriod + stochPeriod;
+            int minHistory = Math.Max(rsiPeriod + stochPeriod, rsiPeriod + 100);
             if (qtyHistory < minHistory)
             {
                 string message = "Insufficient history provided for Stochastic RSI.  " +
                     string.Format(englishCulture,
-                    "You provided {0} periods of history when at least {1} is required.",
-                    qtyHistory, minHistory);
+                    "You provided {0} periods of history when at least {1} is required.  "
+                    + "Since this uses a smoothing technique, "
+                    + "we recommend you use at least {2} data points prior to the intended "
+                    + "usage date for better precision.",
+                    qtyHistory, minHistory, Math.Max(10 * rsiPeriod, minHistory));
 
                 throw new BadHistoryException(nameof(history), message);
             }
         }
-    }
 
+    }
 }

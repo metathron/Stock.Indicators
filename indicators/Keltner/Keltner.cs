@@ -15,10 +15,10 @@ namespace Skender.Stock.Indicators
             where TQuote : IQuote
         {
 
-            // clean quotes
+            // sort history
             List<TQuote> historyList = history.Sort();
 
-            // validate parameters
+            // check parameter arguments
             ValidateKeltner(history, emaPeriod, multiplier, atrPeriod);
 
             // initialize
@@ -58,10 +58,14 @@ namespace Skender.Stock.Indicators
 
 
         private static void ValidateKeltner<TQuote>(
-            IEnumerable<TQuote> history, int emaPeriod, decimal multiplier, int atrPeriod) where TQuote : IQuote
+            IEnumerable<TQuote> history,
+            int emaPeriod,
+            decimal multiplier,
+            int atrPeriod)
+            where TQuote : IQuote
         {
 
-            // check parameters
+            // check parameter arguments
             if (emaPeriod <= 1)
             {
                 throw new ArgumentOutOfRangeException(nameof(emaPeriod), emaPeriod,
@@ -91,7 +95,7 @@ namespace Skender.Stock.Indicators
                     "You provided {0} periods of history when at least {1} is required.  "
                     + "Since this uses a smoothing technique, for a lookback period of {2}, "
                     + "we recommend you use at least {3} data points prior to the intended "
-                    + "usage date for maximum precision.",
+                    + "usage date for better precision.",
                     qtyHistory, minHistory, lookbackPeriod, lookbackPeriod + 250);
 
                 throw new BadHistoryException(nameof(history), message);
@@ -99,5 +103,4 @@ namespace Skender.Stock.Indicators
         }
 
     }
-
 }

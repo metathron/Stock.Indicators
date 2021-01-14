@@ -14,14 +14,14 @@ IEnumerable<ConnorsRsiResult> results = Indicator.GetConnorsRsi(history, rsiPeri
 
 | name | type | notes
 | -- |-- |--
-| `history` | IEnumerable\<[TQuote](../../docs/GUIDE.md#quote)\> | Historical price quotes should have a consistent frequency (day, hour, minute, etc).
+| `history` | IEnumerable\<[TQuote](../../docs/GUIDE.md#historical-quotes)\> | Historical price quotes should have a consistent frequency (day, hour, minute, etc).
 | `rsiPeriod` | int | Lookback period (`R`) for the close price RSI.  Must be greater than 1.  Default is 3.
 | `streakPeriod` | int | Lookback period (`S`) for the streak RSI.  Must be greater than 1.  Default is 2.
 | `rankPeriod` | int | Lookback period (`P`) for the Percentile Rank.  Must be greater than 1.  Default is 100.
 
 ### Minimum history requirements
 
-`N` is the greater of `R` and `S`, and `P`.  You must supply at least `N+2` periods of `history`.  Since this uses a smoothing technique, we recommend you use at least `N+250` data points prior to the intended usage date for greater precision.
+`N` is the greater of `R+100` and `S`, and `P+2`.  You must supply at least `N` periods of `history`.  Since this uses a smoothing technique, we recommend you use at least `N+150` data points prior to the intended usage date for better precision.
 
 ## Response
 
@@ -29,7 +29,9 @@ IEnumerable<ConnorsRsiResult> results = Indicator.GetConnorsRsi(history, rsiPeri
 IEnumerable<ConnorsRsiResult>
 ```
 
-The first `N-1` periods will have `null` values since there's not enough data to calculate.  We always return the same number of elements as there are in the historical quotes.
+The first `R+S+P-1` periods will have `null` values since there's not enough data to calculate.  We always return the same number of elements as there are in the historical quotes.
+
+:warning: **Warning**: The first `N` periods will have decreasing magnitude, convergence-related precision errors that can be as high as ~5% deviation in indicator values for earlier periods.
 
 ### ConnorsRsiResult
 

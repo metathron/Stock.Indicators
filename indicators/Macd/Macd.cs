@@ -15,22 +15,24 @@ namespace Skender.Stock.Indicators
             where TQuote : IQuote
         {
 
-            // clean quotes
-            List<TQuote> historyList = history.Sort();
+            // convert history to basic format
+            List<BasicData> bdList = history.ConvertToBasic("C");
 
-            // check parameters
+            // check parameter arguments
             ValidateMacd(history, fastPeriod, slowPeriod, signalPeriod);
 
             // initialize
-            List<EmaResult> emaFast = GetEma(history, fastPeriod).ToList();
-            List<EmaResult> emaSlow = GetEma(history, slowPeriod).ToList();
+            List<EmaResult> emaFast = CalcEma(bdList, fastPeriod).ToList();
+            List<EmaResult> emaSlow = CalcEma(bdList, slowPeriod).ToList();
 
+            int size = bdList.Count;
             List<BasicData> emaDiff = new List<BasicData>();
-            List<MacdResult> results = new List<MacdResult>(historyList.Count);
+            List<MacdResult> results = new List<MacdResult>(size);
 
-            for (int i = 0; i < historyList.Count; i++)
+            // roll through history
+            for (int i = 0; i < size; i++)
             {
-                TQuote h = historyList[i];
+                BasicData h = bdList[i];
                 EmaResult df = emaFast[i];
                 EmaResult ds = emaSlow[i];
 
@@ -61,7 +63,7 @@ namespace Skender.Stock.Indicators
             // add signal and histogram to result
             List<EmaResult> emaSignal = CalcEma(emaDiff, signalPeriod).ToList();
 
-            for (int d = slowPeriod - 1; d < results.Count; d++)
+            for (int d = slowPeriod - 1; d < size; d++)
             {
                 MacdResult r = results[d];
                 EmaResult ds = emaSignal[d + 1 - slowPeriod];
@@ -74,20 +76,19 @@ namespace Skender.Stock.Indicators
         }
 
 
-        private static void ValidateMacd<TQuote>(IEnumerable<TQuote> history, int fastPeriod, int slowPeriod, int signalPeriod) where TQuote : IQuote
+        private static void ValidateMacd<TQuote>(
+            IEnumerable<TQuote> history,
+            int fastPeriod,
+            int slowPeriod,
+            int signalPeriod)
+            where TQuote : IQuote
         {
 
-            // check parameters
+            // check parameter arguments
             if (fastPeriod <= 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(fastPeriod), fastPeriod,
                     "Fast period must be greater than 0 for MACD.");
-            }
-
-            if (slowPeriod <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(slowPeriod), slowPeriod,
-                    "Slow period must be greater than 0 for MACD.");
             }
 
             if (signalPeriod < 0)
@@ -96,29 +97,27 @@ namespace Skender.Stock.Indicators
                     "Signal period must be greater than or equal to 0 for MACD.");
             }
 
-
-            if (slowPeriod < fastPeriod)
+            if (slowPeriod <= fastPeriod)
             {
-                throw new ArgumentOutOfRangeException(nameof(fastPeriod), fastPeriod,
-                    "Fast period must be smaller than the slow period for MACD.");
+                throw new ArgumentOutOfRangeException(nameof(slowPeriod), slowPeriod,
+                    "Slow period must be greater than the fast period for MACD.");
             }
 
             // check history
             int qtyHistory = history.Count();
-            int minHistory = 2 * slowPeriod + signalPeriod;
+            int minHistory = Math.Max(2 * (slowPeriod + signalPeriod), slowPeriod + signalPeriod + 100);
             if (qtyHistory < minHistory)
             {
                 string message = "Insufficient history provided for MACD.  " +
                     string.Format(englishCulture,
                     "You provided {0} periods of history when at least {1} is required.  "
                     + "Since this uses a smoothing technique, "
-                    + "we recommend you use at least 250 data points prior to the intended "
-                    + "usage date for maximum precision.", qtyHistory, minHistory);
+                    + "we recommend you use at least {2} data points prior to the intended "
+                    + "usage date for better precision.", qtyHistory, minHistory, slowPeriod + 250);
 
                 throw new BadHistoryException(nameof(history), message);
             }
-
         }
-    }
 
+    }
 }

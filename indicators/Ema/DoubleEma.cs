@@ -8,15 +8,15 @@ namespace Skender.Stock.Indicators
     {
         // DOUBLE EXPONENTIAL MOVING AVERAGE
         public static IEnumerable<EmaResult> GetDoubleEma<TQuote>(
-            IEnumerable<TQuote> history, 
-            int lookbackPeriod) 
+            IEnumerable<TQuote> history,
+            int lookbackPeriod)
             where TQuote : IQuote
         {
 
             // convert history to basic format
-            List<BasicData> bdList = Cleaners.ConvertHistoryToBasic(history, "C");
+            List<BasicData> bdList = history.ConvertToBasic("C");
 
-            // validate parameters
+            // check parameter arguments
             ValidateDema(bdList, lookbackPeriod);
 
             // initialize
@@ -54,10 +54,12 @@ namespace Skender.Stock.Indicators
         }
 
 
-        private static void ValidateDema(IEnumerable<BasicData> history, int lookbackPeriod)
+        private static void ValidateDema(
+            IEnumerable<BasicData> history,
+            int lookbackPeriod)
         {
 
-            // check parameters
+            // check parameter arguments
             if (lookbackPeriod <= 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(lookbackPeriod), lookbackPeriod,
@@ -74,12 +76,11 @@ namespace Skender.Stock.Indicators
                     "You provided {0} periods of history when at least {1} is required.  "
                     + "Since this uses a smoothing technique, for a lookback period of {2}, "
                     + "we recommend you use at least {3} data points prior to the intended "
-                    + "usage date for maximum precision.",
+                    + "usage date for better precision.",
                     qtyHistory, minHistory, lookbackPeriod, 2 * lookbackPeriod + 250);
 
                 throw new BadHistoryException(nameof(history), message);
             }
-
         }
 
     }
