@@ -9,8 +9,9 @@ namespace Tests.Performance
     [MarkdownExporterAttribute.GitHub]
     public class MarkIndicators
     {
-        private readonly IEnumerable<Quote> h = History.GetHistory();
-        private readonly IEnumerable<Quote> ho = History.GetHistoryOther();
+        private readonly IEnumerable<Quote> h = HistoryTestData.Get();
+        private readonly IEnumerable<Quote> ho = HistoryTestData.GetCompare();
+        private readonly IEnumerable<Quote> hday = HistoryTestData.GetIntraday(391);
 
         [Benchmark]
         public object GetAdl()
@@ -49,6 +50,12 @@ namespace Tests.Performance
         }
 
         [Benchmark]
+        public object GetAwesome()
+        {
+            return Indicator.GetAwesome(h);
+        }
+
+        [Benchmark]
         public object GetBeta()
         {
             return Indicator.GetBeta(h, ho, 20);
@@ -58,6 +65,12 @@ namespace Tests.Performance
         public object GetBollingerBands()
         {
             return Indicator.GetBollingerBands(h);
+        }
+
+        [Benchmark]
+        public object GetBop()
+        {
+            return Indicator.GetBop(h);
         }
 
         [Benchmark]
@@ -157,6 +170,12 @@ namespace Tests.Performance
         }
 
         [Benchmark]
+        public object GetMaEnvelopes()
+        {
+            return Indicator.GetMaEnvelopes(h, 20, 2.5, MaType.SMA);
+        }
+
+        [Benchmark]
         public object GetMama()
         {
             return Indicator.GetMama(h);
@@ -211,9 +230,9 @@ namespace Tests.Performance
         }
 
         [Benchmark]
-        public object GetPrsWithLookBackAndSma()
+        public object GetPvo()
         {
-            return Indicator.GetPrs(h, ho, 30, 5);
+            return Indicator.GetPvo(h);
         }
 
         [Benchmark]
@@ -259,6 +278,12 @@ namespace Tests.Performance
         }
 
         [Benchmark]
+        public object GetStarcBands()
+        {
+            return Indicator.GetStarcBands(h);
+        }
+
+        [Benchmark]
         public object GetStdDevWithSma()
         {
             return Indicator.GetStdDev(h, 20, 14);
@@ -301,6 +326,12 @@ namespace Tests.Performance
         }
 
         [Benchmark]
+        public object GetTsi()
+        {
+            return Indicator.GetTsi(h);
+        }
+
+        [Benchmark]
         public object GetUlcerIndex()
         {
             return Indicator.GetUlcerIndex(h);
@@ -316,6 +347,12 @@ namespace Tests.Performance
         public object GetVolSma()
         {
             return Indicator.GetVolSma(h, 14);
+        }
+
+        [Benchmark]
+        public object GetVwap()
+        {
+            return Indicator.GetVwap(hday);
         }
 
         [Benchmark]
@@ -335,5 +372,6 @@ namespace Tests.Performance
         {
             return Indicator.GetZigZag(h);
         }
+
     }
 }

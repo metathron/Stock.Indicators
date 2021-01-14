@@ -7,21 +7,22 @@ Created by Perry Kaufman, [KAMA](https://school.stockcharts.com/doku.php?id=tech
 
 ```csharp
 // usage
-IEnumerable<KamaResult> results = Indicator.GetKama(history, erPeriod, fastPeriod, slowPeriod);  
+IEnumerable<KamaResult> results =
+  Indicator.GetKama(history, erPeriod, fastPeriod, slowPeriod);  
 ```
 
 ## Parameters
 
 | name | type | notes
 | -- |-- |--
-| `history` | IEnumerable\<[TQuote](../../docs/GUIDE.md#quote)\> | Historical price quotes should have a consistent frequency (day, hour, minute, etc).
+| `history` | IEnumerable\<[TQuote](../../docs/GUIDE.md#historical-quotes)\> | Historical price quotes should have a consistent frequency (day, hour, minute, etc).
 | `erPeriod` | int | Number of Efficiency Ratio (volatility) periods (`E`).  Must be greater than 0.  Default is 10.
 | `fastPeriod` | int | Number of Fast EMA periods.  Must be greater than 0.  Default is 2.
 | `slowPeriod` | int | Number of Slow EMA periods.  Must be greater than `fastPeriod`.  Default is 30.
 
 ### Minimum history requirements
 
-You must supply at least `2×E` or `E+50` periods of `history`, whichever is more.  Since this uses a smoothing technique, we recommend you use at least `E+100` data points prior to the intended usage date for greater precision.
+You must supply at least `6×E` or `E+100` periods of `history`, whichever is more.  Since this uses a smoothing technique, we recommend you use at least `10×E` data points prior to the intended usage date for better precision.
 
 ## Response
 
@@ -30,6 +31,8 @@ IEnumerable<KamaResult>
 ```
 
 The first `N-1` periods will have `null` values since there's not enough data to calculate.  We always return the same number of elements as there are in the historical quotes.
+
+:warning: **Warning**: The first `10×E` periods will have decreasing magnitude, convergence-related precision errors that can be as high as ~5% deviation in indicator values for earlier periods.
 
 ### KamaResult
 

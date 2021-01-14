@@ -13,7 +13,6 @@ It can be used in any market analysis software using standard OHLCV price quotes
 Explore more information:
 
 - [Indicators and overlays](https://daveskender.github.io/Stock.Indicators/docs/INDICATORS.html)
-- [Getting started](#getting-started)
 - [Guide and Pro tips](https://daveskender.github.io/Stock.Indicators/docs/GUIDE.html)
 - [Contributing guidelines](docs/CONTRIBUTING.md#content)
 - [Discussions](https://github.com/DaveSkender/Stock.Indicators/discussions)
@@ -24,22 +23,6 @@ Explore more information:
 ## Samples
 
 ![image](docs/examples.png)
-
-See [full list of indicators and overlays](https://daveskender.github.io/Stock.Indicators/docs/INDICATORS.html) for more information.
-
-## Getting started
-
-### Installation and setup
-
-Find and install the [Skender.Stock.Indicators](https://www.nuget.org/packages/Skender.Stock.Indicators) NuGet package into your Project.  See [more help](https://www.google.com/search?q=install+nuget+package) for installing packages.
-
-```powershell
-# dotnet CLI example
-dotnet add package Skender.Stock.Indicators
-
-# package manager example
-Install-Package Skender.Stock.Indicators
-```
 
 ### Example usage
 
@@ -52,7 +35,7 @@ using Skender.Stock.Indicators;
 IEnumerable<SmaResult> results = Indicator.GetSma(history,20);
 ```
 
-See [individual indicator pages](https://daveskender.github.io/Stock.Indicators/docs/INDICATORS.html) for specific guidance.
+See the [guide](https://daveskender.github.io/Stock.Indicators/docs/GUIDE.html) and the [full list of indicators and overlays](https://daveskender.github.io/Stock.Indicators/docs/INDICATORS.html) for more information.
 
 ## Frameworks targeted
 
@@ -64,6 +47,10 @@ See [individual indicator pages](https://daveskender.github.io/Stock.Indicators/
 ## Contributing
 
 This NuGet package is an open-source project.  If you want to report bugs or contribute fixes, new indicators, or new features, please review our [contributing guidelines](docs/CONTRIBUTING.md#content) and [the backlog](https://github.com/DaveSkender/Stock.Indicators/projects/1).
+
+## License
+
+This repository uses the standard Apache 2.0 open-source license.  Please review the [license](http://www.apache.org/licenses/LICENSE-2.0) before using or contributing to the software.
 
 ## Contact us
 

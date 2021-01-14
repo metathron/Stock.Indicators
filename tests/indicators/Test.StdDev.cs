@@ -7,14 +7,16 @@ using System.Linq;
 namespace Internal.Tests
 {
     [TestClass]
-    public class StandardDevTests : TestBase
+    public class StdDev : TestBase
     {
 
         [TestMethod()]
-        public void GetStdDev()
+        public void Standard()
         {
             int lookbackPeriod = 10;
-            List<StdDevResult> results = Indicator.GetStdDev(history, lookbackPeriod).ToList();
+
+            List<StdDevResult> results = Indicator.GetStdDev(history, lookbackPeriod)
+                .ToList();
 
             // assertions
 
@@ -23,25 +25,32 @@ namespace Internal.Tests
             Assert.AreEqual(502, results.Count);
             Assert.AreEqual(493, results.Where(x => x.StdDev != null).Count());
             Assert.AreEqual(493, results.Where(x => x.ZScore != null).Count());
-            Assert.AreEqual(false, results.Any(x => x.Sma != null));
+            Assert.AreEqual(false, results.Any(x => x.StdDevSma != null));
 
             // sample values
-            StdDevResult r1 = results[501];
-            Assert.AreEqual(5.4738m, Math.Round((decimal)r1.StdDev, 4));
-            Assert.AreEqual(0.524312m, Math.Round((decimal)r1.ZScore, 6));
-            Assert.AreEqual(null, r1.Sma);
+            StdDevResult r1 = results[8];
+            Assert.AreEqual(null, r1.StdDev);
+            Assert.AreEqual(null, r1.Mean);
+            Assert.AreEqual(null, r1.ZScore);
+            Assert.AreEqual(null, r1.StdDevSma);
 
-            StdDevResult r2 = results[249];
-            Assert.AreEqual(0.9827m, Math.Round((decimal)r2.StdDev, 4));
-            Assert.AreEqual(0.783563m, Math.Round((decimal)r2.ZScore, 6));
-            Assert.AreEqual(null, r2.Sma);
-        }
+            StdDevResult r2 = results[9];
+            Assert.AreEqual(0.5020m, Math.Round((decimal)r2.StdDev, 4));
+            Assert.AreEqual(214.0140m, Math.Round((decimal)r2.Mean, 4));
+            Assert.AreEqual(-0.525917m, Math.Round((decimal)r2.ZScore, 6));
+            Assert.AreEqual(null, r2.StdDevSma);
 
-        [TestMethod()]
-        public void GetStdDevBadData()
-        {
-            IEnumerable<StdDevResult> r = Indicator.GetStdDev(historyBad, 15, 3);
-            Assert.AreEqual(502, r.Count());
+            StdDevResult r3 = results[249];
+            Assert.AreEqual(0.9827m, Math.Round((decimal)r3.StdDev, 4));
+            Assert.AreEqual(257.2200m, Math.Round((decimal)r3.Mean, 4));
+            Assert.AreEqual(0.783563m, Math.Round((decimal)r3.ZScore, 6));
+            Assert.AreEqual(null, r3.StdDevSma);
+
+            StdDevResult r4 = results[501];
+            Assert.AreEqual(5.4738m, Math.Round((decimal)r4.StdDev, 4));
+            Assert.AreEqual(242.4100m, Math.Round((decimal)r4.Mean, 4));
+            Assert.AreEqual(0.524312m, Math.Round((decimal)r4.ZScore, 6));
+            Assert.AreEqual(null, r4.StdDevSma);
         }
 
         [TestMethod()]
@@ -58,43 +67,41 @@ namespace Internal.Tests
             Assert.AreEqual(502, results.Count);
             Assert.AreEqual(493, results.Where(x => x.StdDev != null).Count());
             Assert.AreEqual(493, results.Where(x => x.ZScore != null).Count());
-            Assert.AreEqual(489, results.Where(x => x.Sma != null).Count());
+            Assert.AreEqual(489, results.Where(x => x.StdDevSma != null).Count());
 
             // sample values
-            StdDevResult r1 = results[501];
-            Assert.AreEqual(5.4738m, Math.Round((decimal)r1.StdDev, 4));
-            Assert.AreEqual(0.524312m, Math.Round((decimal)r1.ZScore, 6));
-            Assert.AreEqual(7.6886m, Math.Round((decimal)r1.Sma, 4));
+            StdDevResult r1 = results[19];
+            Assert.AreEqual(1.1642m, Math.Round((decimal)r1.StdDev, 4));
+            Assert.AreEqual(-0.065282m, Math.Round((decimal)r1.ZScore, 6));
+            Assert.AreEqual(1.1422m, Math.Round((decimal)r1.StdDevSma, 4));
 
-            StdDevResult r2 = results[19];
-            Assert.AreEqual(1.1642m, Math.Round((decimal)r2.StdDev, 4));
-            Assert.AreEqual(-0.065282m, Math.Round((decimal)r2.ZScore, 6));
-            Assert.AreEqual(1.1422m, Math.Round((decimal)r2.Sma, 4));
-        }
-
-
-        /* EXCEPTIONS */
-
-        [TestMethod()]
-        [ExpectedException(typeof(ArgumentOutOfRangeException), "Bad lookback.")]
-        public void BadLookbackPeriod()
-        {
-            Indicator.GetStdDev(history, 1);
+            StdDevResult r2 = results[501];
+            Assert.AreEqual(5.4738m, Math.Round((decimal)r2.StdDev, 4));
+            Assert.AreEqual(0.524312m, Math.Round((decimal)r2.ZScore, 6));
+            Assert.AreEqual(7.6886m, Math.Round((decimal)r2.StdDevSma, 4));
         }
 
         [TestMethod()]
-        [ExpectedException(typeof(ArgumentOutOfRangeException), "Bad SMA period.")]
-        public void BadSmaPeriod()
+        public void BadData()
         {
-            Indicator.GetStdDev(history, 14, 0);
+            IEnumerable<StdDevResult> r = Indicator.GetStdDev(historyBad, 15, 3);
+            Assert.AreEqual(502, r.Count());
         }
 
         [TestMethod()]
-        [ExpectedException(typeof(BadHistoryException), "Insufficient history.")]
-        public void InsufficientHistory()
+        public void Exceptions()
         {
-            IEnumerable<Quote> h = History.GetHistory(29);
-            Indicator.GetStdDev(h, 30);
+            // bad lookback period
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
+                Indicator.GetStdDev(history, 1));
+
+            // bad SMA period
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
+                Indicator.GetStdDev(history, 14, 0));
+
+            // insufficient history
+            Assert.ThrowsException<BadHistoryException>(() =>
+                Indicator.GetStdDev(HistoryTestData.Get(29), 30));
         }
 
     }

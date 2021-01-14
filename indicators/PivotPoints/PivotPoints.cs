@@ -14,10 +14,10 @@ namespace Skender.Stock.Indicators
             where TQuote : IQuote
         {
 
-            // clean quotes
+            // sort history
             List<TQuote> historyList = history.Sort();
 
-            // check parameters
+            // check parameter arguments
             ValidatePivotPoints(history, windowSize);
 
             // initialize
@@ -111,6 +111,7 @@ namespace Skender.Stock.Indicators
             };
         }
 
+
         public static PivotPointsResult GetPivotPointStandard(
             decimal high, decimal low, decimal close)
         {
@@ -131,22 +132,22 @@ namespace Skender.Stock.Indicators
         {
             return new PivotPointsResult
             {
-                PP = (high + low + close) / 3,
-                S1 = close - (1m + 1m / 12) * (high - low),
-                S2 = close - (1m + 1m / 6) * (high - low),
-                S3 = close - (1m + 1m / 4) * (high - low),
-                S4 = close - (1m + 1m / 2) * (high - low),
-                R1 = close + (1m + 1m / 12) * (high - low),
-                R2 = close + (1m + 1m / 6) * (high - low),
-                R3 = close + (1m + 1m / 4) * (high - low),
-                R4 = close + (1m + 1m / 2) * (high - low)
+                PP = close,
+                S1 = close - (1.1m / 12) * (high - low),
+                S2 = close - (1.1m / 6) * (high - low),
+                S3 = close - (1.1m / 4) * (high - low),
+                S4 = close - (1.1m / 2) * (high - low),
+                R1 = close + (1.1m / 12) * (high - low),
+                R2 = close + (1.1m / 6) * (high - low),
+                R3 = close + (1.1m / 4) * (high - low),
+                R4 = close + (1.1m / 2) * (high - low)
             };
         }
 
         public static PivotPointsResult GetPivotPointDemark(
             decimal open, decimal high, decimal low, decimal close)
         {
-            decimal? x;
+            decimal? x = null;
 
             if (close < open)
             {
@@ -159,10 +160,6 @@ namespace Skender.Stock.Indicators
             else if (close == open)
             {
                 x = high + low + 2 * close;
-            }
-            else
-            {
-                x = null;
             }
 
             return new PivotPointsResult
@@ -222,11 +219,12 @@ namespace Skender.Stock.Indicators
 
 
         private static void ValidatePivotPoints<TQuote>(
-            IEnumerable<TQuote> history, PeriodSize windowSize)
+            IEnumerable<TQuote> history,
+            PeriodSize windowSize)
             where TQuote : IQuote
         {
 
-            // count periods based on periodSize
+            // check parameter arguments
             int qtyWindows = 0;
 
             switch (windowSize)
@@ -253,7 +251,7 @@ namespace Skender.Stock.Indicators
                     break;
             };
 
-            // check history to ensure 2+ periods are present
+            // check history
             if (qtyWindows < 2)
             {
                 string message = "Insufficient history provided for Pivot Points.  " +
@@ -264,8 +262,7 @@ namespace Skender.Stock.Indicators
 
                 throw new BadHistoryException(nameof(history), message);
             }
-
         }
-    }
 
+    }
 }

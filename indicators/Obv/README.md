@@ -17,7 +17,7 @@ IEnumerable<ObvResult> results = Indicator.GetObv(history, smaPeriod);
 
 | name | type | notes
 | -- |-- |--
-| `history` | IEnumerable\<[TQuote](../../docs/GUIDE.md#quote)\> | Historical price quotes should have a consistent frequency (day, hour, minute, etc).
+| `history` | IEnumerable\<[TQuote](../../docs/GUIDE.md#historical-quotes)\> | Historical price quotes should have a consistent frequency (day, hour, minute, etc).
 | `smaPeriod` | int | Optional.  Number of periods (`N`) in the moving average of OBV.  Must be greater than 0, if specified.
 
 ### Minimum history requirements
@@ -38,7 +38,7 @@ The first period OBV will have `0` value since there's not enough data to calcul
 | -- |-- |--
 | `Date` | DateTime | Date
 | `Obv` | decimal | On-balance Volume
-| `Sma` | decimal | SMA of the OBV based on `smaPeriod` periods, if specified
+| `ObvSma` | decimal | Moving average (SMA) of OBV based on `smaPeriod` periods, if specified
 
 :warning: **Warning**: absolute values in OBV are somewhat meaningless, so use with caution.
 

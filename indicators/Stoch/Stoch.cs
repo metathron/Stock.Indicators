@@ -15,16 +15,17 @@ namespace Skender.Stock.Indicators
             where TQuote : IQuote
         {
 
-            // clean quotes
+            // sort history
             List<TQuote> historyList = history.Sort();
 
-            // validate parameters
+            // check parameter arguments
             ValidateStoch(history, lookbackPeriod, signalPeriod, smoothPeriod);
 
             // initialize
-            List<StochResult> results = new List<StochResult>(historyList.Count);
+            int size = historyList.Count;
+            List<StochResult> results = new List<StochResult>(size);
 
-            // oscillator
+            // roll through history
             for (int i = 0; i < historyList.Count; i++)
             {
                 TQuote h = historyList[i];
@@ -71,14 +72,14 @@ namespace Skender.Stock.Indicators
             // smooth the oscillator
             if (smoothPeriod > 1)
             {
-                results = SmoothOscillator(results, lookbackPeriod, smoothPeriod);
+                results = SmoothOscillator(results, size, lookbackPeriod, smoothPeriod);
             }
 
 
-            // signal and period direction info
+            // signal (%D) and %J
             int stochIndex = lookbackPeriod + smoothPeriod - 2;
 
-            for (int i = stochIndex; i < results.Count; i++)
+            for (int i = stochIndex; i < size; i++)
             {
                 StochResult r = results[i];
                 int index = i + 1;
@@ -100,6 +101,7 @@ namespace Skender.Stock.Indicators
                     }
 
                     r.Signal = sumOsc / signalPeriod;
+                    r.PercentJ = 3 * r.Oscillator - 2 * r.Signal;
                 }
             }
 
@@ -108,41 +110,45 @@ namespace Skender.Stock.Indicators
 
 
         private static List<StochResult> SmoothOscillator(
-            List<StochResult> results, int lookbackPeriod, int smoothPeriod)
+            List<StochResult> results, int size, int lookbackPeriod, int smoothPeriod)
         {
 
             // temporarily store interim smoothed oscillator
             int smoothIndex = lookbackPeriod + smoothPeriod - 2;
+            decimal?[] smooth = new decimal?[size]; // smoothed value
 
-            for (int i = smoothIndex; i < results.Count; i++)
+            for (int i = smoothIndex; i < size; i++)
             {
-                StochResult r = results[i];
                 int index = i + 1;
 
                 decimal sumOsc = 0m;
                 for (int p = index - smoothPeriod; p < index; p++)
                 {
-                    StochResult d = results[p];
-                    sumOsc += (decimal)d.Oscillator;
+                    sumOsc += (decimal)results[p].Oscillator;
                 }
 
-                r.Smooth = sumOsc / smoothPeriod;
+                smooth[i] = sumOsc / smoothPeriod;
             }
 
             // replace oscillator
-            foreach (StochResult r in results)
+            for (int i = 0; i < size; i++)
             {
-                r.Oscillator = (r.Smooth != null) ? r.Smooth : null;
+                results[i].Oscillator = (smooth[i] != null) ? smooth[i] : null;
             }
 
             return results;
         }
 
 
-        private static void ValidateStoch<TQuote>(IEnumerable<TQuote> history, int lookbackPeriod, int signalPeriod, int smoothPeriod) where TQuote : IQuote
+        private static void ValidateStoch<TQuote>(
+            IEnumerable<TQuote> history,
+            int lookbackPeriod,
+            int signalPeriod,
+            int smoothPeriod)
+            where TQuote : IQuote
         {
 
-            // check parameters
+            // check parameter arguments
             if (lookbackPeriod <= 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(lookbackPeriod), lookbackPeriod,
@@ -174,6 +180,6 @@ namespace Skender.Stock.Indicators
                 throw new BadHistoryException(nameof(history), message);
             }
         }
-    }
 
+    }
 }

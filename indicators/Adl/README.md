@@ -17,7 +17,7 @@ IEnumerable<AdlResult> results = Indicator.GetAdl(history, smaPeriod);
 
 | name | type | notes
 | -- |-- |--
-| `history` | IEnumerable\<[TQuote](../../docs/GUIDE.md#quote)\> | Historical price quotes should have a consistent frequency (day, hour, minute, etc).
+| `history` | IEnumerable\<[TQuote](../../docs/GUIDE.md#historical-quotes)\> | Historical price quotes should have a consistent frequency (day, hour, minute, etc).
 | `smaPeriod` | int | Optional.  Number of periods (`N`) in the moving average of ADL.  Must be greater than 0, if specified.
 
 ### Minimum history requirements
@@ -40,7 +40,7 @@ We always return the same number of elements as there are in the historical quot
 | `MoneyFlowMultiplier` | decimal | Money Flow Multiplier
 | `MoneyFlowVolume` | decimal | Money Flow Volume
 | `Adl` | decimal | Accumulation Distribution Line (ADL)
-| `Sma` | decimal | SMA of the ADL based on `smaPeriod` periods, if specified
+| `AdlSma` | decimal | Moving average (SMA) of ADL based on `smaPeriod` periods, if specified
 
 :warning: **Warning**: absolute values in ADL and MFV are somewhat meaningless, so use with caution.
 

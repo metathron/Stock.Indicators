@@ -17,9 +17,9 @@ IEnumerable<StdDevResult> results = Indicator.GetStdDev(history, lookbackPeriod,
 
 | name | type | notes
 | -- |-- |--
-| `history` | IEnumerable\<[TQuote](../../docs/GUIDE.md#quote)\> | Historical price quotes should have a consistent frequency (day, hour, minute, etc).
+| `history` | IEnumerable\<[TQuote](../../docs/GUIDE.md#historical-quotes)\> | Historical price quotes should have a consistent frequency (day, hour, minute, etc).
 | `lookbackPeriod` | int | Number of periods (`N`) in the lookback period.  Must be greater than 1 to calculate; however we suggest a larger period for statistically appropriate sample size.
-| `smaPeriod` | int | Optional.  Number of periods in the moving average of STDEV.  Must be greater than 0, if specified.
+| `smaPeriod` | int | Optional.  Number of periods in the moving average of STDDEV.  Must be greater than 0, if specified.
 
 ### Minimum history requirements
 
@@ -38,9 +38,10 @@ The first `N-1` periods will have `null` values since there's not enough data to
 | name | type | notes
 | -- |-- |--
 | `Date` | DateTime | Date
-| `StdDev` | decimal | Standard Deviation of Close price based on `N` lookback periods
+| `StdDev` | decimal | Standard Deviation of Close price over `N` lookback periods
+| `Mean` | decimal | Mean value of Close price over `N` lookback periods
 | `ZScore` | decimal | Z-Score of current Close price (number of standard deviations from mean)
-| `Sma` | decimal | SMA of the STDEV based on `smaPeriod` periods, if specified
+| `StdDevSma` | decimal | Moving average (SMA) of STDDEV based on `smaPeriod` periods, if specified
 
 ## Example
 

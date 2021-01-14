@@ -7,14 +7,15 @@ Created by Goichi Hosoda (細田悟一, Hosoda Goichi), [Ichimoku Cloud](https:/
 
 ```csharp
 // usage
-IEnumerable<IchimokuResult> results = Indicator.GetIchimoku(history, lookbackPeriod);  
+IEnumerable<IchimokuResult> results =
+  Indicator.GetIchimoku(history, signalPeriod, shortSpanPeriod, longSpanPeriod);  
 ```
 
 ## Parameters
 
 | name | type | notes
 | -- |-- |--
-| `history` | IEnumerable\<[TQuote](../../docs/GUIDE.md#quote)\> | Historical price quotes should have a consistent frequency (day, hour, minute, etc).
+| `history` | IEnumerable\<[TQuote](../../docs/GUIDE.md#historical-quotes)\> | Historical price quotes should have a consistent frequency (day, hour, minute, etc).
 | `signalPeriod` | int | Number of periods (`N`) in the Tenkan-sen midpoint evaluation.  Must be greater than 0.  Default is 9.
 | `shortSpanPeriod` | int | Number of periods (`S`) in the shorter Kijun-sen midpoint evaluation.  It also sets the Chikou span lag/shift.  Must be greater than 0.  Default is 26.
 | `longSpanPeriod` | int | Number of periods (`L`) in the longer Senkou leading span B midpoint evaluation.  Must be greater than `S`.  Default is 52.
@@ -49,7 +50,8 @@ The first `N-1`, `S-1`, and `L-1` periods will have various `null` values since 
 IEnumerable<Quote> history = GetHistoryFromFeed("MSFT");
 
 // calculate ICHIMOKU(9,26,52)
-IEnumerable<IchimokuResult> results = Indicator.GetIchimoku(history,9,26,52);
+IEnumerable<IchimokuResult> results =
+  Indicator.GetIchimoku(history,9,26,52);
 
 // use results as needed
 IchimokuResult result = results.LastOrDefault();

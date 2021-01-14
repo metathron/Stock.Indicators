@@ -15,7 +15,7 @@ namespace Skender.Stock.Indicators
             where TQuote : IQuote
         {
 
-            // check parameters
+            // check parameter arguments
             ValidatePmo(history, timePeriod, smoothingPeriod, signalPeriod);
 
             // initialize
@@ -56,7 +56,10 @@ namespace Skender.Stock.Indicators
         }
 
 
-        private static List<PmoResult> CalcPmoRocEma<TQuote>(IEnumerable<TQuote> history, int timePeriod) where TQuote : IQuote
+        private static List<PmoResult> CalcPmoRocEma<TQuote>(
+            IEnumerable<TQuote> history,
+            int timePeriod)
+            where TQuote : IQuote
         {
             // initialize
             decimal smoothingMultiplier = 2m / timePeriod;
@@ -143,10 +146,11 @@ namespace Skender.Stock.Indicators
             IEnumerable<TQuote> history,
             int timePeriod,
             int smoothingPeriod,
-            int signalPeriod) where TQuote : IQuote
+            int signalPeriod)
+            where TQuote : IQuote
         {
 
-            // check parameters
+            // check parameter arguments
             if (timePeriod <= 1)
             {
                 throw new ArgumentOutOfRangeException(nameof(timePeriod), timePeriod,
@@ -167,7 +171,7 @@ namespace Skender.Stock.Indicators
 
             // check history
             int qtyHistory = history.Count();
-            int minHistory = timePeriod + smoothingPeriod;
+            int minHistory = Math.Max(timePeriod + smoothingPeriod, Math.Max(2 * timePeriod, timePeriod + 100));
             if (qtyHistory < minHistory)
             {
                 string message = "Insufficient history provided for PMO.  " +
@@ -175,13 +179,12 @@ namespace Skender.Stock.Indicators
                     "You provided {0} periods of history when at least {1} is required.  "
                     + "Since this uses a several smoothing operations, "
                     + "we recommend you use at least {2} data points prior to the intended "
-                    + "usage date for maximum precision.",
-                    qtyHistory, minHistory, minHistory + signalPeriod + 250);
+                    + "usage date for better precision.",
+                    qtyHistory, minHistory, minHistory + 250);
 
                 throw new BadHistoryException(nameof(history), message);
             }
-
         }
-    }
 
+    }
 }
