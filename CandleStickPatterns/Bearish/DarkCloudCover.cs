@@ -47,7 +47,6 @@ namespace Stock.CandleStickPatterns
                                     SignalResult result = new SignalResult(current, System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name)
                                     {
                                         Date = current.Date,
-                                        //Source= "DarkCloudCover"
                                     };
                                     results.Add(result);
                                 }

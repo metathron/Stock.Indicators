@@ -13,8 +13,6 @@ namespace Stock.CandleStickPatterns
             IEnumerable<TQuote> history)
             where TQuote : IPatternQuote
         {
-          
-
             // clean quotes
             List<TQuote> historyList = history.OrderBy(x => x.Date).ToList();
 

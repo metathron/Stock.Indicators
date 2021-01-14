@@ -37,7 +37,6 @@ namespace Stock.CandleStickPatterns
                                 SignalResult result = new SignalResult(h, System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name)
                                 {
                                     Date = h.Date,
-                                    //Source = "SpinningTop"
                                 };
                                 results.Add(result);
                             }
