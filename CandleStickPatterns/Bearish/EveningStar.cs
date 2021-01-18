@@ -7,10 +7,9 @@ using System.Text;
 namespace Stock.CandleStickPatterns
 {
     //https://www.youtube.com/watch?v=o65YF_xbmPs
-    public class EveningStar
+    public static partial class Indicator
     {
-        public const string SOURCE= "EveningStar";
-        public static IEnumerable<SignalResult> GetSignals<TQuote>(
+        public static IEnumerable<PatternResult> GetEveningStar<TQuote>(
         IEnumerable<TQuote> history,
         int lookbackPeriod = 10, decimal previousMinimunBodyInPercent = 80.0M, decimal minimumRatioStarBodyToPreviousBody = 3.0M)
         where TQuote : IPatternQuote
@@ -20,11 +19,13 @@ namespace Stock.CandleStickPatterns
             // clean quotes
             List<TQuote> historyList = history.OrderBy(x => x.Date).ToList();
 
+
+            string name = "EveningStar";
             // check parameters
-            ValidateData(history, lookbackPeriod);
+            ValidateDataForPattern(history, lookbackPeriod, name);
 
             // initialize
-            List<SignalResult> results = new List<SignalResult>();// (historyList.Count);
+            List<PatternResult> results = new List<PatternResult>();// (historyList.Count);
 
             // roll through history
             for (int i = 1; i < historyList.Count; i++)
@@ -49,9 +50,10 @@ namespace Stock.CandleStickPatterns
                                     //nextDay close lower than middle of first day
                                     if ((previous.Low + (previous.CandleSize / 2)) > next.Close)
                                     {
-                                        SignalResult result = new SignalResult(h, System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name)
+                                        PatternResult result = new PatternResult(h, name)
                                         {
                                             Date = h.Date,
+                                            IsBear = true
                                         };
                                         results.Add(result);
                                     }
@@ -62,30 +64,6 @@ namespace Stock.CandleStickPatterns
             }
 
             return results;
-        }
-
-        private static void ValidateData<TQuote>(IEnumerable<TQuote> history, int lookbackPeriod) where TQuote : IPatternQuote
-        {
-
-            // check parameters
-            if (lookbackPeriod <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(lookbackPeriod), lookbackPeriod,
-                    $"Lookback period must be greater than 0 for {SOURCE}.");
-            }
-
-            // check history
-            int qtyHistory = history.Count();
-            int minHistory = lookbackPeriod;
-            if (qtyHistory < minHistory)
-            {
-                string message = $"Insufficient history provided for {SOURCE}.  " +
-                    string.Format("You provided {0} periods of history when at least {1} is required.",
-                    qtyHistory, minHistory);
-
-                throw new BadHistoryException(nameof(history), message);
-            }
-
         }
     }
 }

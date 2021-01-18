@@ -7,22 +7,21 @@ using System.Linq;
 
 namespace Stock.CandleStickPatterns
 {
-    public class BullishEngulfing
+    public static partial class Indicator
     {
-        public static IEnumerable<SignalResult> GetSignals<TQuote>(
+        public static IEnumerable<PatternResult> GetBullishEngulfing<TQuote>(
             IEnumerable<TQuote> history)
             where TQuote : IPatternQuote
         {
-
-
             // clean quotes
             List<TQuote> historyList = history.OrderBy(x => x.Date).ToList();
 
+            string name = "BullishEngulfing";
             // check parameters
-            ValidateEngulfing(history, 2);
+            ValidateDataForPattern(history, 2, name);
 
             // initialize
-            List<SignalResult> results = new List<SignalResult>();// (historyList.Count);
+            List<PatternResult> results = new List<PatternResult>();// (historyList.Count);
 
             // roll through history
             for (int i = 0; i < historyList.Count; i++)
@@ -40,41 +39,16 @@ namespace Stock.CandleStickPatterns
                     var firstCandleLowIsHigherThanSecondCandleLow = previous.Low > h.Open;
                     if (firstCandle && secondCandle && firstCandleHighIsLowerThanSecondCandleOpen && firstCandleLowIsHigherThanSecondCandleLow)
                     {
-                        SignalResult result = new SignalResult(h, System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name)
+                        PatternResult result = new PatternResult(h, name)
                         {
                             Date = h.Date,
+                            IsBull = true
                         };
                         results.Add(result);
                     }
                 }
             }
-
             return results;
         }
-
-        private static void ValidateEngulfing<TQuote>(IEnumerable<TQuote> history, int lookbackPeriod) where TQuote : IPatternQuote
-        {
-
-            // check parameters
-            if (lookbackPeriod <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(lookbackPeriod), lookbackPeriod,
-                    "Lookback period must be greater than 0 for BullishEngulfing.");
-            }
-
-            // check history
-            int qtyHistory = history.Count();
-            int minHistory = lookbackPeriod;
-            if (qtyHistory < minHistory)
-            {
-                string message = "Insufficient history provided for BullishEngulfing.  " +
-                    string.Format("You provided {0} periods of history when at least {1} is required.",
-                    qtyHistory, minHistory);
-
-                throw new BadHistoryException(nameof(history), message);
-            }
-
-        }
-
     }
 }

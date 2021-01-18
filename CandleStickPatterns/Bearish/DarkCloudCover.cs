@@ -6,9 +6,9 @@ using System.Text;
 
 namespace Stock.CandleStickPatterns
 {
-    public class DarkCloudCover
+    public static partial class Indicator
     {
-        public static IEnumerable<SignalResult> GetSignals<TQuote>(
+        public static IEnumerable<PatternResult> GetDarkCloudCover<TQuote>(
           IEnumerable<TQuote> history,
           int lookbackPeriod = 5)
           where TQuote : IPatternQuote
@@ -18,11 +18,13 @@ namespace Stock.CandleStickPatterns
             // clean quotes
             List<TQuote> historyList = history.OrderBy(x => x.Date).ToList();
 
+
+            string name = "DarkCloudCover";
             // check parameters
-            ValidateDarkCloudCover(history, lookbackPeriod);
+            ValidateDataForPattern(history, 2, name);
 
             // initialize
-            List<SignalResult> results = new List<SignalResult>();// (historyList.Count);
+            List<PatternResult> results = new List<PatternResult>();// (historyList.Count);
 
             // roll through history
             for (int i = 1; i < historyList.Count; i++)
@@ -44,9 +46,10 @@ namespace Stock.CandleStickPatterns
                                 var fiftyPercentOfLastBody = previous.BodySize / 2 + previous.Low + previous.LowerWickSize;
                                 if (current.Close < fiftyPercentOfLastBody) 
                                 {
-                                    SignalResult result = new SignalResult(current, System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name)
+                                    PatternResult result = new PatternResult(current, name)
                                     {
                                         Date = current.Date,
+                                        IsBear = true
                                     };
                                     results.Add(result);
                                 }
@@ -57,30 +60,6 @@ namespace Stock.CandleStickPatterns
             }
 
             return results;
-        }
-
-        private static void ValidateDarkCloudCover<TQuote>(IEnumerable<TQuote> history, int lookbackPeriod) where TQuote : IPatternQuote
-        {
-
-            // check parameters
-            if (lookbackPeriod <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(lookbackPeriod), lookbackPeriod,
-                    "Lookback period must be greater than 0 for DarkCloudCover.");
-            }
-
-            // check history
-            int qtyHistory = history.Count();
-            int minHistory = lookbackPeriod;
-            if (qtyHistory < minHistory)
-            {
-                string message = "Insufficient history provided for DarkCloudCover.  " +
-                    string.Format("You provided {0} periods of history when at least {1} is required.",
-                    qtyHistory, minHistory);
-
-                throw new BadHistoryException(nameof(history), message);
-            }
-
         }
     }
 }

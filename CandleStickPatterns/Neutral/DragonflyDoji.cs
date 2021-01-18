@@ -7,10 +7,10 @@ using System.Text;
 
 namespace Stock.CandleStickPatterns
 {
-    public class DragonflyDoji
+    public static partial class Indicator
     {
         //https://www.investopedia.com/terms/d/doji.asp
-        public static IEnumerable<SignalResult> GetSignals<TQuote>(
+        public static IEnumerable<PatternResult> GetDragonflyDoji<TQuote>(
              IEnumerable<TQuote> history,
              decimal maxBodySizeInPercent = 0.10M, decimal maxUpperRegionInPercent = 10, decimal minimumCandleSizeInPercent = 0.5M)
              where TQuote : IPatternQuote
@@ -21,8 +21,9 @@ namespace Stock.CandleStickPatterns
             // clean quotes
             List<TQuote> historyList = history.OrderBy(x => x.Date).ToList();
 
+            string name = "DragonflyDoji";
             // initialize
-            List<SignalResult> results = new List<SignalResult>();
+            List<PatternResult> results = new List<PatternResult>();
 
             // roll through history
             for (int i = 0; i < historyList.Count; i++)
@@ -37,7 +38,7 @@ namespace Stock.CandleStickPatterns
 
                     if (h.UpperWickPercent < maxUpperRegionInPercent)
                     {
-                        SignalResult result = new SignalResult(h, System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name)
+                        PatternResult result = new PatternResult(h, name)
                         {
                             Date = h.Date,
                         };

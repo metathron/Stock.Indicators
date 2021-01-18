@@ -5,14 +5,16 @@ using System.Text;
 
 namespace Stock.CandleStickPatterns
 {
-    public class SignalResult : ResultBase
+    public class PatternResult : ResultBase
     {
-        public SignalResult(IPatternQuote signal, string source)
+        public PatternResult(IPatternQuote signal, string source)
         {
             Signal = signal;
             Source = source;
         }
         public IPatternQuote Signal { get; set; }
+        public bool IsBull { get; set; }
+        public bool IsBear { get; set; }
         public string Source { get; set; }
     }
 }

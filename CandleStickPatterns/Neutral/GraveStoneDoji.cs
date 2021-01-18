@@ -6,10 +6,10 @@ using System.Text;
 
 namespace Stock.CandleStickPatterns
 {
-    public class GraveStoneDoji
+    public static partial class Indicator
     {
         //https://www.investopedia.com/terms/d/doji.asp
-        public static IEnumerable<SignalResult> GetSignals<TQuote>(
+        public static IEnumerable<PatternResult> GetGraveStoneDoji<TQuote>(
              IEnumerable<TQuote> history,
              decimal maxBodySizeInPercent = 0.10M, decimal maxLowerRegionInPercent = 10, decimal minimumCandleSizeInPercent = 0.5M)
              where TQuote : IPatternQuote
@@ -20,8 +20,9 @@ namespace Stock.CandleStickPatterns
             // clean quotes
             List<TQuote> historyList = history.OrderBy(x => x.Date).ToList();
 
+            string name = "GraveStoneDoji";
             // initialize
-            List<SignalResult> results = new List<SignalResult>();
+            List<PatternResult> results = new List<PatternResult>();
 
             // roll through history
             for (int i = 0; i < historyList.Count; i++)
@@ -37,7 +38,7 @@ namespace Stock.CandleStickPatterns
 
                     if (h.LowerWickPercent < maxLowerRegionInPercent)
                     {
-                        SignalResult result = new SignalResult(h, System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name)
+                        PatternResult result = new PatternResult(h, name)
                         {
                             Date = h.Date,
                         };

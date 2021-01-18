@@ -7,9 +7,9 @@ using System.Text;
 namespace Stock.CandleStickPatterns
 {
     //https://www.investopedia.com/terms/s/spinning-top.asp
-    public class SpinningTop
+    public static partial class Indicator
     {
-        public static IEnumerable<SignalResult> GetSignals<TQuote>(
+        public static IEnumerable<PatternResult> GetSpinningTop<TQuote>(
              IEnumerable<TQuote> history,
              decimal maxBodySizeInPercent = 0.10M, decimal longLegerRegionInPercent = 30, decimal minimumCandleSizeInPercent = 0.5M)
              where TQuote : IPatternQuote
@@ -18,8 +18,8 @@ namespace Stock.CandleStickPatterns
             List<TQuote> historyList = history.OrderBy(x => x.Date).ToList();
 
             // initialize
-            List<SignalResult> results = new List<SignalResult>();
-
+            List<PatternResult> results = new List<PatternResult>();
+            string name = "SpinningTop";
             // roll through history
             for (int i = 0; i < historyList.Count; i++)
             {
@@ -32,9 +32,9 @@ namespace Stock.CandleStickPatterns
                     {
                         if ((Math.Abs(h.Low - next.Low) / 100) < 0.5M) // the differenz between this two Lows should only be 0.5%
                         {
-                            if (LongLeggedDoji.IsLongLegedDoji(maxBodySizeInPercent, longLegerRegionInPercent, minimumCandleSizeInPercent, h) && LongLeggedDoji.IsLongLegedDoji(maxBodySizeInPercent, longLegerRegionInPercent, minimumCandleSizeInPercent, next))
+                            if (IsLongLegedDoji(maxBodySizeInPercent, longLegerRegionInPercent, minimumCandleSizeInPercent, h) && IsLongLegedDoji(maxBodySizeInPercent, longLegerRegionInPercent, minimumCandleSizeInPercent, next))
                             {
-                                SignalResult result = new SignalResult(h, System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name)
+                                PatternResult result = new PatternResult(h, name)
                                 {
                                     Date = h.Date,
                                 };

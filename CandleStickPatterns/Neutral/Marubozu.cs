@@ -5,9 +5,9 @@ using System.Text;
 
 namespace Stock.CandleStickPatterns
 {
-    public class Marubozu
+    public static partial class Indicator
     {
-        public static IEnumerable<SignalResult> GetSignals<TQuote>(
+        public static IEnumerable<PatternResult> GetMarubozu<TQuote>(
      IEnumerable<TQuote> history,
      decimal minBodySizeInPercent = 60.0M)
      where TQuote : IPatternQuote
@@ -16,8 +16,9 @@ namespace Stock.CandleStickPatterns
             // clean quotes
             List<TQuote> historyList = history.OrderBy(x => x.Date).ToList();
 
+            string name = "Marubozu";
             // initialize
-            List<SignalResult> results = new List<SignalResult>();
+            List<PatternResult> results = new List<PatternResult>();
 
             // roll through history
             for (int i = 0; i < historyList.Count; i++)
@@ -29,60 +30,36 @@ namespace Stock.CandleStickPatterns
                 {
                     if (h.Open == h.High && h.Close != h.Low)
                     {
-                        SignalResult result = new SignalResult(h, System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name)
-                        {
-                            Date = h.Date,
-                            Source = "Marubozu open bearish"
-                        };
-                        results.Add(result);
+                        name = "Marubozu open bearish";
                     }
                     if (h.Open == h.Low && h.Close != h.High)
                     {
-                        SignalResult result = new SignalResult(h, System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name)
-                        {
-                            Date = h.Date,
-                            Source = "Marubozu open bullish"
-                        };
-                        results.Add(result);
+                        name = "Marubozu open bullish";
                     }
 
                     if (h.Close == h.Low && h.Open != h.High)
                     {
-                        SignalResult result = new SignalResult(h, System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name)
-                        {
-                            Date = h.Date,
-                            Source = "Marubozu close bearish"
-                        };
-                        results.Add(result);
+                        name = "Marubozu close bearish";
                     }
                     if (h.Close == h.High && h.Open != h.Low)
                     {
-                        SignalResult result = new SignalResult(h, System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name)
-                        {
-                            Date = h.Date,
-                            Source = "Marubozu open bullish"
-                        };
-                        results.Add(result);
+                        name = "Marubozu open bullish";
                     }
 
-                    if ( h.Open == h.Low && h.Close == h.High)
+                    if (h.Open == h.Low && h.Close == h.High)
                     {
-                        SignalResult result = new SignalResult(h, System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name)
-                        {
-                            Date = h.Date,
-                            Source = "Marubozu full bullish"
-                        };
-                        results.Add(result);
+                        name = "Marubozu full bullish";
                     }
                     if (h.Open == h.High && h.Close == h.Low)
                     {
-                        SignalResult result = new SignalResult(h, System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name)
-                        {
-                            Date = h.Date,
-                            Source = "Marubozu full bearish"
-                        };
-                        results.Add(result);
+                        name = "Marubozu full bearish";
                     }
+
+                    PatternResult result = new PatternResult(h, name)
+                    {
+                        Date = h.Date
+                    };
+                    results.Add(result);
                 }
 
             }
