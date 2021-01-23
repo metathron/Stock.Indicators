@@ -14,6 +14,14 @@
         TEMA,
         WMA
     }
+    
+    public enum ConfiramtionType
+    {
+        NotConfirmable,
+        NotConfirmableMissingData,
+        Confirmed,
+        NotConfirmed
+    }
 
 
     public enum PeriodSize
