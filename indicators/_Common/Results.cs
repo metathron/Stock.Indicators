@@ -31,5 +31,17 @@ namespace Skender.Stock.Indicators
                 .FirstOrDefault();
         }
     }
-
+    public class PatternResult : ResultBase
+    {
+        public PatternResult(IPatternQuote candle, string source)
+        {
+            Candle = candle;
+            Source = source;
+        }
+        public IQuote Candle { get; set; }
+        public bool Long { get; set; }
+        public bool Short { get; set; }
+        public string Source { get; set; }
+        public ConfiramtionType Confirmed {get;set;}
+    }
 }
