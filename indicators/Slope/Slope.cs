@@ -7,6 +7,8 @@ namespace Skender.Stock.Indicators
     public static partial class Indicator
     {
         // SLOPE AND LINEAR REGRESSION
+        /// <include file='./info.xml' path='indicator/*' />
+        /// 
         public static IEnumerable<SlopeResult> GetSlope<TQuote>(
             IEnumerable<TQuote> history,
             int lookbackPeriod)
@@ -20,10 +22,11 @@ namespace Skender.Stock.Indicators
             ValidateSlope(history, lookbackPeriod);
 
             // initialize
-            List<SlopeResult> results = new List<SlopeResult>(historyList.Count);
+            int size = historyList.Count;
+            List<SlopeResult> results = new List<SlopeResult>(size);
 
             // roll through history
-            for (int i = 0; i < historyList.Count; i++)
+            for (int i = 0; i < size; i++)
             {
                 TQuote h = historyList[i];
                 int index = i + 1;
@@ -89,10 +92,8 @@ namespace Skender.Stock.Indicators
             }
 
             // add last Line (y = mx + b)
-            int lastIndex = historyList.Count;
-            SlopeResult last = results[lastIndex - 1];
-
-            for (int p = lastIndex - lookbackPeriod; p < lastIndex; p++)
+            SlopeResult last = results.LastOrDefault();
+            for (int p = size - lookbackPeriod; p < size; p++)
             {
                 SlopeResult d = results[p];
                 d.Line = last.Slope * (p + 1) + last.Intercept;
@@ -121,13 +122,13 @@ namespace Skender.Stock.Indicators
             if (qtyHistory < minHistory)
             {
                 string message = "Insufficient history provided for Slope/Linear Regression.  " +
-                    string.Format(englishCulture,
+                    string.Format(
+                        EnglishCulture,
                     "You provided {0} periods of history when at least {1} is required.",
                     qtyHistory, minHistory);
 
                 throw new BadHistoryException(nameof(history), message);
             }
         }
-
     }
 }

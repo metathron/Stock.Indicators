@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<indicator>
+  <summary>
+    Fractal Chaos Bands outline high and low price channels to depict broad less-chaotic price movements. FCB is a channelized depiction of Williams Fractals.
+    See
+    <see href="https://daveskender.github.io/Stock.Indicators/indicators/Fcb/#content">documentation</see>
+    for more information.
+  </summary>
+  <typeparam name="TQuote">Configurable Quote type.  See Guide for more information.</typeparam>
+  <param name="history">Historical price quotes.</param>
+  <param name="windowSpan">Number of span periods in the evaluation window.</param>
+  <returns>Time series of Fractal Chaos Band and Oscillator values.</returns>
+  <exception cref="ArgumentOutOfRangeException">Invalid parameter value provided.</exception>
+  <exception cref="BadHistoryException">Insufficient history provided.</exception>
+</indicator>
