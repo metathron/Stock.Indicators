@@ -3,13 +3,13 @@
 - [Installation and setup](#installation-and-setup)
 - [Prerequisite data](#prerequisite-data)
 - [Example usage](#example-usage)
-- [About Historical quotes](#historical-quotes)
+- [About historical quotes](#historical-quotes)
 - [Using custom quote classes](#using-custom-quote-classes)
 - [Validating historical quotes](#validating-historical-quotes)
 - [Using derived results classes](#using-derived-results-classes)
 - [Generating indicator of indicators](#generating-indicator-of-indicators)
 - [Helper functions](#helper-functions)
-- [Contributing guidelines](CONTRIBUTING.md)
+- [Contributing guidelines](https://daveskender.github.io/Stock.Indicators/docs/CONTRIBUTING.html)
 
 ## Getting started
 
@@ -153,7 +153,7 @@ Historical quotes are automatically re-sorted [ascending by date] on every call 
 IEnumerable<Quote> history = GetHistoryFromFeed("SPY");
 
 // advanced validation
-List<Quote> validatedHistory = history.Validate();
+IEnumerable<Quote> validatedHistory = history.Validate();
 ```
 
 ## Using derived results classes

@@ -7,6 +7,8 @@ namespace Skender.Stock.Indicators
     public static partial class Indicator
     {
         // MOVING AVERAGE ENVELOPES
+        /// <include file='./info.xml' path='indicator/*' />
+        /// 
         public static IEnumerable<MaEnvelopeResult> GetMaEnvelopes<TQuote>(
             IEnumerable<TQuote> history,
             int lookbackPeriod,
@@ -41,6 +43,15 @@ namespace Skender.Stock.Indicators
                         Centerline = x.Ema,
                         UpperEnvelope = x.Ema + x.Ema * offsetRatio,
                         LowerEnvelope = x.Ema - x.Ema * offsetRatio
+                    }),
+
+                MaType.EPMA => GetEpma(history, lookbackPeriod)
+                    .Select(x => new MaEnvelopeResult
+                    {
+                        Date = x.Date,
+                        Centerline = x.Epma,
+                        UpperEnvelope = x.Epma + x.Epma * offsetRatio,
+                        LowerEnvelope = x.Epma - x.Epma * offsetRatio
                     }),
 
                 MaType.EMA => GetEma(history, lookbackPeriod)
@@ -90,7 +101,8 @@ namespace Skender.Stock.Indicators
 
                 _ => throw new ArgumentOutOfRangeException(
                          nameof(movingAverageType), movingAverageType,
-                         string.Format(englishCulture,
+                         string.Format(
+                             EnglishCulture,
                          "Moving Average Envelopes does not support {0}.",
                          Enum.GetName(typeof(MaType), movingAverageType)))
             };
@@ -108,6 +120,5 @@ namespace Skender.Stock.Indicators
                     "Percent Offset must be greater than 0 for Moving Average Envelopes.");
             }
         }
-
     }
 }

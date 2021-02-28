@@ -8,26 +8,28 @@ We are accepting these sorts of changes and requests:
 
 - Bug reports and fixes
 - Usability improvements
-- New reputable "by the book" indicators and overlays that are in the public domain
+- Documentation updates
+- New reputable "by the book" indicators and overlays
 
 We are not accepting things that should be done in your own wrapper code:
 
 - Personal customizations and preferences
-- Modified or augmented outputs that are not instrinsic to the standard definition
+- Modified or augmented outputs that are not instrinsic
 
 ## Reporting bugs and feature requests
 
-If you are reporting a bug or suspect a problem, please [submit an Issue](https://github.com/DaveSkender/Stock.Indicators/issues) with a detailed description of the problem + include steps to reproduce, code samples, and any reference materials.  For new features, add a new Idea in the [Discussions](https://github.com/DaveSkender/Stock.Indicators/discussions) area.
+If you are reporting a bug or suspect a problem, please [submit an Issue](https://github.com/DaveSkender/Stock.Indicators/issues) with a detailed description of the problem + include steps to reproduce, code samples, and any reference materials.  For new features, add a new Issue with the `enhancement` label.
 
 ## Project management
 
 - Planned work is managed in [the backlog](https://github.com/DaveSkender/Stock.Indicators/projects/1).
-- Work items are primarily [entered as Notes](https://docs.github.com/en/free-pro-team@latest/github/managing-your-work-on-github/adding-notes-to-a-project-board) (not Issues), except where an Issue is user reported.  With that said, Notes can be converted to Issues if in-progress and collaborative discussion is needed; though, we prefer conversations in the [Discussions](https://github.com/DaveSkender/Stock.Indicators/discussions) area.
+- Work items are primarily [entered as Notes](https://docs.github.com/en/free-pro-team@latest/github/managing-your-work-on-github/adding-notes-to-a-project-board) (not Issues), except where an issue or feature is user reported.  With that said, Notes can be converted to Issues if in-progress and collaborative discussion is needed.
+- Use the [Discussions](https://github.com/DaveSkender/Stock.Indicators/discussions) area for general ideation and unrelated questions.
 
 ## Developing
 
 - Read this first: [contributing to an open-source GitHub project](https://codeburst.io/a-step-by-step-guide-to-making-your-first-github-contribution-5302260a2940)
-- If you are adding a new indicator, the easiest way to do this is to copy the folder of an existing indicator and rename everything using the same naming conventions and taxonomy.  All new indicators should include unit tests.
+- If you are adding a new indicator, the easiest way to do this is to copy the folder of an existing indicator and rename everything using the same naming conventions and taxonomy.  All new indicators should include unit and performance tests.
 - Update the `INDICATORS.md` file if you're adding a new indicator, and the `README.md` file for the individual indicator.  This is our only user documentation.
 - Do not comingle multiple contributions.  Please keep changes small and separate.
 
@@ -41,10 +43,10 @@ If you are reporting a bug or suspect a problem, please [submit an Issue](https:
 
 ### Performance benchmarking
 
-Running the `Tests.Performance` console application in `Release` mode will produce performance reports in the `bin` folder that we periodically include in the repo documentation.  You can find the latest results [here](../tests/performance/README.md).
+Running the `Tests.Performance` console application in `Release` mode will produce performance data that we periodically include in the repo documentation.  You can find the latest results [here](../tests/performance/README.md).
 
 ```bash
-# run all performance bencmarks
+# run all performance benchmarks
 dotnet run -c Release
 
 # run individual performance benchmark
@@ -67,7 +69,7 @@ After a Pull Request is reviewed, accepted, and [squash] merged to master, we ma
 
 ## Code reviews and administration
 
-If you want to contribute administratively or help with code reviews, I'm also currently seeking a few core people to help.  Please [contact us](#contact-info) if interested.
+If you want to contribute administratively, do code reviews, or provide general user support, we're also currently seeking a few core people to help.  Please [contact us](#contact-info) if interested.
 
 ## Standards and design guidelines
 
@@ -85,7 +87,9 @@ We use the `GitVersion` tool for [semantic versioning](https://semver.org).  It 
 
 ## License
 
-This repository uses a standard Apache 2.0 open-source license.  It enables open-source community development by protecting the project and contributors from certain legal risks while allowing the widest range of uses, including in closed source software.  Please review the [License](http://www.apache.org/licenses/LICENSE-2.0) before using or contributing to the software.
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
+This repository uses a standard Apache 2.0 open-source license.  It enables open-source community development by protecting the project and contributors from certain legal risks while allowing the widest range of uses, including in closed source software.  Please review the [license](https://opensource.org/licenses/Apache-2.0) before using or contributing to the software.
 
 ## Contact info
 
