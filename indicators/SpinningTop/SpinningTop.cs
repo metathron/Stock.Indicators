@@ -11,7 +11,7 @@ namespace Skender.Stock.Indicators
     {
         public static IEnumerable<PatternResult> GetSpinningTop<TQuote>(
              IEnumerable<TQuote> history,
-             decimal maxBodySizeInPercent = 0.10M, decimal longLegerRegionInPercent = 30, decimal minimumCandleSizeInPercent = 0.5M)
+             decimal maxBodySizeInPercent = 10.0M, decimal longLegerRegionInPercent = 30.0M)
              where TQuote : IPatternQuote
         {
             // clean quotes
@@ -30,7 +30,7 @@ namespace Skender.Stock.Indicators
                 {
                     if ((Math.Abs(current.Low - previous.Low) / 100) < 0.5M) // the differenz between this two Lows should only be 0.5%
                     {
-                        if (IsLongLegedDoji(maxBodySizeInPercent, longLegerRegionInPercent, minimumCandleSizeInPercent, current) && IsLongLegedDoji(maxBodySizeInPercent, longLegerRegionInPercent, minimumCandleSizeInPercent, previous))
+                        if (IsLongLegedDoji(current, maxBodySizeInPercent, longLegerRegionInPercent) && IsLongLegedDoji(previous, maxBodySizeInPercent, longLegerRegionInPercent))
                         {
                             PatternResult result = new PatternResult(current, name)
                             {

@@ -11,7 +11,7 @@ namespace Skender.Stock.Indicators
         //https://www.investopedia.com/terms/d/doji.asp
         public static IEnumerable<PatternResult> GetGraveStoneDoji<TQuote>(
              IEnumerable<TQuote> history,
-             decimal maxBodySizeInPercent = 0.10M, decimal maxLowerRegionInPercent = 10, decimal minimumCandleSizeInPercent = 0.5M)
+             decimal maxBodySizeInPercent = 10.0M, decimal maxLowerRegionInPercent = 10.0M)
              where TQuote : IPatternQuote
         {
             //https://www.youtube.com/watch?v=fY-j26ozA2w
@@ -27,20 +27,17 @@ namespace Skender.Stock.Indicators
             // roll through history
             for (int i = 0; i < historyList.Count; i++)
             {
-                TQuote h = historyList[i];
+                TQuote current = historyList[i];
 
-                var maxBodyCandleMatch = Math.Abs(h.Open - h.Close) < h.Close * (maxBodySizeInPercent / 100);
-                var minimumCandleMatch = h.High - h.Low > h.Close * (minimumCandleSizeInPercent / 100);
-                if (maxBodyCandleMatch && minimumCandleMatch)
+                if (IsDoji(current, maxBodySizeInPercent))
                 {
-
                     //Is in range for GraveStoneDoji
 
-                    if (h.LowerWickPercent < maxLowerRegionInPercent)
+                    if (current.LowerWickPercent < maxLowerRegionInPercent)
                     {
-                        PatternResult result = new PatternResult(h, name)
+                        PatternResult result = new PatternResult(current, name)
                         {
-                            Date = h.Date,
+                            Date = current.Date,
                         };
                         results.Add(result);
                     }

@@ -11,10 +11,11 @@ namespace Skender.Stock.Indicators
     {
         public static IEnumerable<PatternResult> GetHammer<TQuote>(
             IEnumerable<TQuote> history,
-            int lookbackPeriod = 5, decimal minimumRatioLowerToBody = 3.0M, decimal maxBodySizeInPercent = 25.0M)
+            int lookbackPeriod = 3, bool shouldOpenWithASmallGap = false, decimal minimumRatioLowerToBody = 3.0M, decimal maxBodySizeInPercent = 25.0M)
             where TQuote : IPatternQuote
         {
             //https://en.wikipedia.org/wiki/Hammer_(candlestick_pattern)
+            //https://tradistats.com/kerzenchart-hammer-2/
             // clean quotes
             List<TQuote> historyList = history.OrderBy(x => x.Date).ToList();
 
@@ -27,21 +28,41 @@ namespace Skender.Stock.Indicators
             List<PatternResult> results = new List<PatternResult>();// (historyList.Count);
 
             // roll through history
-            for (int i = 0; i < historyList.Count; i++)
+            for (int i = 1; i < historyList.Count; i++)
             {
-                TQuote h = historyList[i];
+                TQuote current = historyList[i];
+                TQuote previous = historyList[i - 1];
                 if (i > lookbackPeriod)
                 {
                     if (IsInDowntrend(historyList.Skip(i - (lookbackPeriod)).Take(lookbackPeriod).ToList()))
                     {
-                        if (((h.BodyPercent * minimumRatioLowerToBody) < h.LowerWickPercent) && h.BodyPercent <= maxBodySizeInPercent)
+                        //check if the candle open under the previous close after a close of the stock exchange. In crypto there is no close of the broker
+                        if (!shouldOpenWithASmallGap || current.Open < previous.Close)
                         {
-                            PatternResult result = new PatternResult(h, name)
+                            if (((current.BodyPercent * minimumRatioLowerToBody) < current.LowerWickPercent) && current.BodyPercent <= maxBodySizeInPercent)
                             {
-                                Date = h.Date,
-                                Long = true
-                            };
-                            results.Add(result);
+                                PatternResult result = new PatternResult(current, name)
+                                {
+                                    Date = current.Date,
+                                    Long = true,
+                                    Confirmed = ConfiramtionType.NotConfirmableMissingData
+                                };
+
+
+                                int nextIndex = i + 1;
+                                //checked for confirmation
+                                if (nextIndex < historyList.Count)
+                                {
+                                    TQuote next = historyList[nextIndex];
+                                    //there are 2 ways, confirm after close or confirm if the next High is higher then the current low
+                                    if (next.Close > current.Low)
+                                        result.Confirmed = ConfiramtionType.Confirmed;
+                                    else
+                                        result.Confirmed = ConfiramtionType.NotConfirmed;
+                                }
+
+                                results.Add(result);
+                            }
                         }
                     }
                 }

@@ -10,10 +10,11 @@ namespace Skender.Stock.Indicators
     {
         public static IEnumerable<PatternResult> GetPiercingLine<TQuote>(
            IEnumerable<TQuote> history,
-           int lookbackPeriod = 3, decimal minBodySizeInPercent = 50.0M)
+           int lookbackPeriod = 3, bool shouldOpenWithABigGap = false, decimal minBodySizeInPercent = 50.0M)
            where TQuote : IPatternQuote
         {
             //http://tutorials.topstockresearch.com/candlestick/Bullish/BullishPiercing/TutotrialOnBullishPiercingChartPattern.html
+            //https://tradistats.com/dark-cloud-cover-und-piercing-pattern/
             // clean quotes
             List<TQuote> historyList = history.OrderBy(x => x.Date).ToList();
 
@@ -35,29 +36,32 @@ namespace Skender.Stock.Indicators
                         var previousCandles = historyList.Skip(i - (lookbackPeriod)).Take(lookbackPeriod).ToList();
                         if (AllCandlesBearish(previousCandles))
                         {
-                            if (previous.Close > current.Open && current.IsBullish)
+                            if (!shouldOpenWithABigGap || current.Open < previous.Low)
                             {
-                                var fiftyPercentOfLastBody = previous.BodySize / 2 + previous.Low + previous.LowerWickSize;
-                                if (current.Close > fiftyPercentOfLastBody)
+                                if (previous.Close > current.Open && current.IsBullish)
                                 {
-                                    ConfiramtionType confirmed = ConfiramtionType.NotConfirmableMissingData;
-                                    //Check is Confirmation possible
-                                    if (i < (historyList.Count - 1))
+                                    var fiftyPercentOfLastBody = previous.BodySize / 2 + previous.Low + previous.LowerWickSize;
+                                    if (current.Close > fiftyPercentOfLastBody)
                                     {
-                                        var confirmationCandle = historyList[i + 1];
-                                        if (confirmationCandle.Close > current.Close)
-                                            confirmed = ConfiramtionType.Confirmed;
-                                        else
-                                            confirmed = ConfiramtionType.NotConfirmed;
-                                    }
+                                        ConfiramtionType confirmed = ConfiramtionType.NotConfirmableMissingData;
+                                        //Check is Confirmation possible
+                                        if (i < (historyList.Count - 1))
+                                        {
+                                            var confirmationCandle = historyList[i + 1];
+                                            if (confirmationCandle.Close > current.Close)
+                                                confirmed = ConfiramtionType.Confirmed;
+                                            else
+                                                confirmed = ConfiramtionType.NotConfirmed;
+                                        }
 
-                                    PatternResult result = new PatternResult(current, name)
-                                    {
-                                        Date = current.Date,
-                                        Long = true,
-                                        Confirmed = confirmed
-                                    };
-                                    results.Add(result);
+                                        PatternResult result = new PatternResult(current, name)
+                                        {
+                                            Date = current.Date,
+                                            Long = true,
+                                            Confirmed = confirmed
+                                        };
+                                        results.Add(result);
+                                    }
                                 }
                             }
                         }

@@ -11,7 +11,7 @@ namespace Skender.Stock.Indicators
         //https://www.investopedia.com/terms/d/doji.asp
         public static IEnumerable<PatternResult> GetLongLeggedDoji<TQuote>(
              IEnumerable<TQuote> history,
-             decimal maxBodySizeInPercent = 0.10M, decimal longLegerRegionInPercent = 30, decimal minimumCandleSizeInPercent = 0.5M)
+             decimal maxBodySizeInPercent = 10.0M, decimal longLegerRegionInPercent = 30.0M)
              where TQuote : IPatternQuote
         {
             //https://www.youtube.com/watch?v=fY-j26ozA2w
@@ -27,14 +27,14 @@ namespace Skender.Stock.Indicators
             // roll through history
             for (int i = 0; i < historyList.Count; i++)
             {
-                TQuote h = historyList[i];
+                TQuote current = historyList[i];
 
                 //Is in range for Long-Legged
-                if (IsLongLegedDoji(maxBodySizeInPercent, longLegerRegionInPercent, minimumCandleSizeInPercent, h))
+                if (IsLongLegedDoji(current, maxBodySizeInPercent, longLegerRegionInPercent))
                 {
-                    PatternResult result = new PatternResult(h, name)
+                    PatternResult result = new PatternResult(current, name)
                     {
-                        Date = h.Date,
+                        Date = current.Date,
                     };
                     results.Add(result);
                 }
@@ -45,12 +45,11 @@ namespace Skender.Stock.Indicators
         }
 
 
-        internal static bool IsLongLegedDoji<TQuote>(decimal maxBodySizeInPercent, decimal longLegerRegionInPercent, decimal minimumCandleSizeInPercent, TQuote h) where TQuote : IPatternQuote
+        internal static bool IsLongLegedDoji<TQuote>(TQuote h, decimal maxBodySizeInPercent = 10.0M, decimal longLegerRegionInPercent = 30.0M) where TQuote : IPatternQuote
         {
             bool result = false;
-            var maxBodyCandleMatch = Math.Abs(h.Open - h.Close) < h.Close * (maxBodySizeInPercent / 100);
-            var minimumCandleMatch = h.High - h.Low > h.Close * (minimumCandleSizeInPercent / 100);
-            if (maxBodyCandleMatch && minimumCandleMatch)
+
+            if (IsDoji(h, maxBodySizeInPercent))
             {
                 //Is in range for Long-Legged
                 if (h.UpperWickPercent > (30 - longLegerRegionInPercent))
@@ -60,7 +59,16 @@ namespace Skender.Stock.Indicators
             }
             return result;
         }
+        internal static bool IsDoji<TQuote>(TQuote h, decimal maxBodySizeInPercent = 10.0M) where TQuote : IPatternQuote
+        {
+            bool result = false;
 
+            if (h.BodyPercent <= maxBodySizeInPercent)
+            {
+                result = true;
+            }
+            return result;
+        }
     }
 }
 

@@ -11,7 +11,7 @@ namespace Skender.Stock.Indicators
     {
         public static IEnumerable<PatternResult> GetEveningStar<TQuote>(
         IEnumerable<TQuote> history,
-        int lookbackPeriod = 10, decimal previousMinimunBodyInPercent = 80.0M, decimal minimumRatioStarBodyToPreviousBody = 3.0M)
+        int lookbackPeriod = 5, decimal previousMinimunBodyInPercent = 80.0M, decimal maximumStarBodyInPercent = 20.0M)
         where TQuote : IPatternQuote
         {
             //https://www.investopedia.com/terms/e/eveningstar.asp
@@ -34,30 +34,31 @@ namespace Skender.Stock.Indicators
                 {
                     TQuote previous = historyList[i - 1];
 
-                    TQuote h = historyList[i];
+                    TQuote current = historyList[i];
                     TQuote next = historyList[i + 1];
 
                     if (i > lookbackPeriod)
                     {
-                        var isHighestValue = h.High > historyList.Skip(i - (lookbackPeriod)).Take(lookbackPeriod).Max(m => m.High);
+                        var isHighestValue = current.High > historyList.Skip(i - (lookbackPeriod)).Take(lookbackPeriod).Max(m => m.High);
                         if (isHighestValue)
                         {
-                            //is current bullish && previous is bullish && previous x times bigger
-                            if (previous.IsBullish && h.IsBullish && previous.BodyPercent > previousMinimunBodyInPercent && (h.BodySize * minimumRatioStarBodyToPreviousBody < previous.BodySize))
-                                //check is next bearish  && 
-                                if (next.IsBearish && previous.High < h.Low && h.Open > next.Open)
+                            if (previous.IsBullish && previous.BodyPercent > previousMinimunBodyInPercent && IsDoji(current, maximumStarBodyInPercent) && next.IsBearish)
+                            {
+                                // check for Gap's
+                                if (previous.Close < current.Open && next.Open < current.Close)
                                 {
-                                    //nextDay close lower than middle of first day
-                                    if ((previous.Low + (previous.CandleSize / 2)) > next.Close)
+                                    //check if end in or above Body of previous
+                                    if (next.Close < previous.Close)
                                     {
-                                        PatternResult result = new PatternResult(h, name)
+                                        PatternResult result = new PatternResult(current, name)
                                         {
-                                            Date = h.Date,
-                                            Short = true
+                                            Date = current.Date,
+                                            Long = true
                                         };
                                         results.Add(result);
                                     }
                                 }
+                            }
                         }
                     }
                 }
