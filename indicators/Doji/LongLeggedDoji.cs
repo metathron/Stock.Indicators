@@ -52,20 +52,10 @@ namespace Skender.Stock.Indicators
             if (IsDoji(h, maxBodySizeInPercent))
             {
                 //Is in range for Long-Legged
-                if (h.UpperWickPercent > (30 - longLegerRegionInPercent))
+                if (h.UpperWickPercent > longLegerRegionInPercent && h.LowerWickPercent > longLegerRegionInPercent)
                 {
                     result = true;
                 }
-            }
-            return result;
-        }
-        internal static bool IsDoji<TQuote>(TQuote h, decimal maxBodySizeInPercent = 10.0M) where TQuote : IPatternQuote
-        {
-            bool result = false;
-
-            if (h.BodyPercent <= maxBodySizeInPercent)
-            {
-                result = true;
             }
             return result;
         }

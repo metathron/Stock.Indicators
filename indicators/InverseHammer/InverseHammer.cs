@@ -12,7 +12,7 @@ namespace Skender.Stock.Indicators
         //https://tradistats.com/hanging-man-und-inverted-hammer/
         public static IEnumerable<PatternResult> GetInverseHammer<TQuote>(
             IEnumerable<TQuote> history,
-            int lookbackPeriod = 3, bool shouldOpenWithASmallGap = false, decimal minimumRatioLowerToBody = 3.0M, decimal maxBodySizeInPercent = 25.0M)
+            int lookbackPeriod = 3, bool shouldOpenWithASmallGap = true, decimal minimumRatioLowerToBody = 3.0M, decimal maxBodySizeInPercent = 25.0M)
             where TQuote : IPatternQuote
         {
 

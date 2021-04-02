@@ -11,7 +11,7 @@ namespace Skender.Stock.Indicators
     {
         public static IEnumerable<PatternResult> GetHammer<TQuote>(
             IEnumerable<TQuote> history,
-            int lookbackPeriod = 3, bool shouldOpenWithASmallGap = false, decimal minimumRatioLowerToBody = 3.0M, decimal maxBodySizeInPercent = 25.0M)
+            int lookbackPeriod = 3, bool shouldOpenWithASmallGap = true, decimal minimumRatioLowerToBody = 3.0M, decimal maxBodySizeInPercent = 25.0M)
             where TQuote : IPatternQuote
         {
             //https://en.wikipedia.org/wiki/Hammer_(candlestick_pattern)

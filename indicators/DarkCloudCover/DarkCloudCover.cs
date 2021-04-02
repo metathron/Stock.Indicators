@@ -10,7 +10,7 @@ namespace Skender.Stock.Indicators
     {
         public static IEnumerable<PatternResult> GetDarkCloudCover<TQuote>(
           IEnumerable<TQuote> history,
-          int lookbackPeriod = 3, bool shouldOpenWithABigGap = false, decimal minBodySizeInPercent = 50.0M)
+          int lookbackPeriod = 3, bool shouldOpenWithABigGap = true, decimal minBodySizeInPercent = 50.0M)
           where TQuote : IPatternQuote
         {
             //https://admiralmarkets.com/de/wissen/articles/forex-basics/alles-was-sie-uber-candlesticks-wissen-mussen

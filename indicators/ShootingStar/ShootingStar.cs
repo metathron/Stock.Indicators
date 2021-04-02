@@ -10,7 +10,7 @@ namespace Skender.Stock.Indicators
     {
         public static IEnumerable<PatternResult> GetShootingStar<TQuote>(
             IEnumerable<TQuote> history,
-            int lookbackPeriod = 3, bool shouldOpenWithASmallGap = false, decimal minimumRatioUpperToBody = 2.2M, decimal maxBodySizeInPercent = 25.0M)
+            int lookbackPeriod = 3, bool shouldOpenWithASmallGap = true, decimal minimumRatioUpperToBody = 2.2M, decimal maxBodySizeInPercent = 25.0M)
             where TQuote : IPatternQuote
         {
             //https://en.wikipedia.org/wiki/Shooting_star_(candlestick_pattern)

@@ -1,19 +1,17 @@
-﻿
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Skender.Stock.Indicators
 {
     public static partial class Indicator
     {
         //https://www.investopedia.com/terms/d/doji.asp
-        public static IEnumerable<PatternResult> GetDragonflyDoji<TQuote>(
-             IEnumerable<TQuote> history,
-             decimal maxBodySizeInPercent = 10.0M, decimal maxUpperRegionInPercent = 10.0M)
-             where TQuote : IPatternQuote
+        public static IEnumerable<PatternResult> GetDoji<TQuote>(
+         IEnumerable<TQuote> history, decimal maxBodySizeInPercent = 10.0M)
+         where TQuote : IPatternQuote
         {
             //https://www.youtube.com/watch?v=fY-j26ozA2w
             //if(and(abs(Open[i]-Close[i])<Close*(maxBodySizeInPercent/100), High[i]-Low[i]>Close[i]*(minimumCandleSizeInPercent/100)
@@ -21,7 +19,7 @@ namespace Skender.Stock.Indicators
             // clean quotes
             List<TQuote> historyList = history.OrderBy(x => x.Date).ToList();
 
-            string name = "DragonflyDoji";
+            string name = "LeggedDoji";
             // initialize
             List<PatternResult> results = new List<PatternResult>();
 
@@ -30,25 +28,29 @@ namespace Skender.Stock.Indicators
             {
                 TQuote current = historyList[i];
 
+                //Is in range for Long-Legged
                 if (IsDoji(current, maxBodySizeInPercent))
                 {
-                    //Is in range for DragonFlyDoji
-
-                    if (current.UpperWickPercent < maxUpperRegionInPercent)
+                    PatternResult result = new PatternResult(current, name)
                     {
-                        PatternResult result = new PatternResult(current, name)
-                        {
-                            Date = current.Date,
-                        };
-                        results.Add(result);
-                    }
+                        Date = current.Date,
+                    };
+                    results.Add(result);
                 }
+
             }
 
             return results;
         }
+        internal static bool IsDoji<TQuote>(TQuote h, decimal maxBodySizeInPercent = 10.0M) where TQuote : IPatternQuote
+        {
+            bool result = false;
 
-
+            if (h.BodyPercent <= maxBodySizeInPercent)
+            {
+                result = true;
+            }
+            return result;
+        }
     }
 }
-
