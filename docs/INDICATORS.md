@@ -1,16 +1,69 @@
 # Indicators and overlays
 
+- [Price trends](#price-trends)
+- [Price channels](#price-channels)
+- [Overbought/oversold oscillators](#overboughtoversold-oscillators)
+- [Stop and reverse](#stop-and-reverse)
+- [Candlestick patterns](#candlestick-patterns)
+- [Volume-based momentum](#volume-based-momentum)
 - [Moving averages](#moving-averages)
 - [Price transforms](#price-transforms)
-- [Price channels](#price-channels)
-- [Candlestick patterns](#candlestick-patterns)
-- [Overbought/oversold oscillators](#overboughtoversold-oscillators)
-- [Price trends](#price-trends)
-- [Volume-based momentum](#volume-based-momentum)
-- [Composite indicators](#composite-indicators)
-- [Stop and reverse](#stop-and-reverse)
 - [Price characteristics](#price-characteristics)
-- [Numerical analysis](#numerical-analysis)
+
+## Price trends
+
+- [Aroon Oscillator](../indicators/Aroon/README.md#content)
+- [Average Directional Movement Index (ADX)](../indicators/Adx/README.md#content)
+- [Elder-ray Index](../indicators/ElderRay/README.md#content)
+- [Gator Oscillator](../indicators/Gator/README.md#content)
+- [Ichimoku Cloud](../indicators/Ichimoku/README.md#content)
+- [Moving Average Convergence/Divergence (MACD)](../indicators/Macd/README.md#content)
+- [SuperTrend](../indicators/SuperTrend/README.md#content)
+- [Vortex Indicator (VI)](../indicators/Vortex/README.md#content)
+- [Williams Alligator](../indicators/Alligator/README.md#content)
+
+## Price channels
+
+- [Bollinger Bands&#174;](../indicators/BollingerBands/README.md#content)
+- [Donchian Channels](../indicators/Donchian/README.md#content)
+- [Fractal Chaos Bands](../indicators/Fcb/README.md#content)
+- [Keltner Channels](../indicators/Keltner/README.md#content)
+- [Moving Average Envelopes](../indicators/MaEnvelopes/README.md#content)
+- [Pivot Points](../indicators/PivotPoints/README.md#content) and [Rolling Pivot Points](../indicators/RollingPivots/README.md#content)
+- [Price Channels](../indicators/Donchian/README.md#content)
+- [Standard Deviation Channels](../indicators/StdDevChannels/README.md#content)
+- [STARC Bands](../indicators/StarcBands/README.md#content)
+
+## Overbought/oversold oscillators
+
+- [ConnorsRSI](../indicators/ConnorsRsi/README.md#content)
+- [Commodity Channel Index](../indicators/Cci/README.md#content)
+- [Relative Strength Index (RSI)](../indicators/Rsi/README.md#content)
+- [Stochastic Oscillator](../indicators/Stoch/README.md#content) and [KDJ Index](../indicators/Stoch/README.md#content)
+- [Stochastic RSI](../indicators/StochRsi/README.md#content)
+- [Ultimate Oscillator](../indicators/Ultimate/README.md#content)
+- [Williams %R](../indicators/WilliamsR/README.md#content)
+
+## Stop and reverse
+
+- [Chandelier Exit](../indicators/Chandelier/README.md#content)
+- [Parabolic SAR](../indicators/ParabolicSar/README.md#content)
+- [SuperTrend](../indicators/SuperTrend/README.md#content)
+
+## Candlestick patterns
+
+- [Williams Fractal](../indicators/Fractal/README.md#content)
+
+## Volume-based momentum
+
+- [Accumulation/Distribution Line (ADL)](../indicators/Adl/README.md#content)
+- [Chaikin Money Flow (CMF)](../indicators/Cmf/README.md#content)
+- [Chaikin Oscillator](../indicators/ChaikinOsc/README.md#content)
+- [Force Index](../indicators/ForceIndex/README.md#content)
+- [Money Flow Index (MFI)](../indicators/Mfi/README.md#content)
+- [On-balance Volume (OBV)](../indicators/Obv/README.md#content)
+- [Percentage Volume Oscillator (PVO)](../indicators/Pvo/README.md#content)
+- [Volume Simple Moving Average](../indicators/VolSma/README.md#content)
 
 ## Moving averages
 
@@ -35,60 +88,6 @@
 
 - [Heikin-Ashi](../indicators/HeikinAshi/README.md#content)
 - [Zig Zag](../indicators/ZigZag/README.md#content)
-
-## Price channels
-
-- [Bollinger Bands&#174;](../indicators/BollingerBands/README.md#content)
-- [Donchian Channels](../indicators/Donchian/README.md#content)
-- [Fractal Chaos Bands](../indicators/Fcb/README.md#content)
-- [Keltner Channels](../indicators/Keltner/README.md#content)
-- [Moving Average Envelopes](../indicators/MaEnvelopes/README.md#content)
-- [Pivot Points](../indicators/PivotPoints/README.md#content) and [Rolling Pivot Points](../indicators/RollingPivots/README.md#content)
-- [Price Channels](../indicators/Donchian/README.md#content)
-- [Standard Deviation Channels](../indicators/StdDevChannels/README.md#content)
-- [STARC Bands](../indicators/StarcBands/README.md#content)
-
-## Candlestick patterns
-
-- [Williams Fractal](../indicators/Fractal/README.md#content)
-
-## Overbought/oversold oscillators
-
-- [Aroon Oscillator](../indicators/Aroon/README.md#content)
-- [ConnorsRSI](../indicators/ConnorsRsi/README.md#content)
-- [Commodity Channel Index](../indicators/Cci/README.md#content)
-- [Relative Strength Index (RSI)](../indicators/Rsi/README.md#content)
-- [Stochastic Oscillator](../indicators/Stoch/README.md#content) and [KDJ Index](../indicators/Stoch/README.md#content)
-- [Stochastic RSI](../indicators/StochRsi/README.md#content)
-- [Ultimate Oscillator](../indicators/Ultimate/README.md#content)
-- [Williams %R](../indicators/WilliamsR/README.md#content)
-
-## Price trends
-
-- [Average Directional Movement Index (ADX)](../indicators/Adx/README.md#content)
-- [Elder-ray Index](../indicators/ElderRay/README.md#content)
-- [Vortex Indicator (VI)](../indicators/Vortex/README.md#content)
-
-## Volume-based momentum
-
-- [Accumulation/Distribution Line (ADL)](../indicators/Adl/README.md#content)
-- [Chaikin Money Flow (CMF)](../indicators/Cmf/README.md#content)
-- [Chaikin Oscillator](../indicators/ChaikinOsc/README.md#content)
-- [Money Flow Index (MFI)](../indicators/Mfi/README.md#content)
-- [On-balance Volume (OBV)](../indicators/Obv/README.md#content)
-- [Percentage Volume Oscillator (PVO)](../indicators/Pvo/README.md#content)
-- [Volume Simple Moving Average](../indicators/VolSma/README.md#content)
-
-## Composite indicators
-
-- [Ichimoku Cloud](../indicators/Ichimoku/README.md#content)
-- [Moving Average Convergence/Divergence (MACD)](../indicators/Macd/README.md#content)
-
-## Stop and reverse
-
-- [Chandelier Exit](../indicators/Chandelier/README.md#content)
-- [Parabolic SAR](../indicators/ParabolicSar/README.md#content)
-- [SuperTrend](../indicators/SuperTrend/README.md#content)
 
 ## Price characteristics
 

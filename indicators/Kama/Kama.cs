@@ -24,7 +24,7 @@ namespace Skender.Stock.Indicators
             ValidateKama(history, erPeriod, fastPeriod, slowPeriod);
 
             // initialize
-            List<KamaResult> results = new List<KamaResult>(historyList.Count);
+            List<KamaResult> results = new(historyList.Count);
             decimal scFast = 2m / (fastPeriod + 1);
             decimal scSlow = 2m / (slowPeriod + 1);
 
@@ -34,7 +34,7 @@ namespace Skender.Stock.Indicators
                 TQuote h = historyList[i];
                 int index = i + 1;
 
-                KamaResult r = new KamaResult
+                KamaResult r = new()
                 {
                     Date = h.Date
                 };
@@ -53,8 +53,11 @@ namespace Skender.Stock.Indicators
 
                     if (sumPV != 0)
                     {
-                        // efficiency ratio and smoothing constant
+                        // efficiency ratio
                         decimal er = change / sumPV;
+                        r.ER = er;
+
+                        // smoothing constant
                         decimal sc = er * (scFast - scSlow) + scSlow;  // squared later
 
                         // kama calculation
@@ -65,6 +68,7 @@ namespace Skender.Stock.Indicators
                     // handle flatline case
                     else
                     {
+                        r.ER = 0;
                         r.Kama = h.Close;
                     }
                 }
