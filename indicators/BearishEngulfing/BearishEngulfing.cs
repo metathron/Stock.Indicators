@@ -11,10 +11,10 @@ namespace Skender.Stock.Indicators
     {
         public static IEnumerable<PatternResult> GetBearishEngulfing<TQuote>(
             IEnumerable<TQuote> history)
-            where TQuote : IPatternQuote
+            where TQuote : IQuote
         {
             // clean quotes
-            List<TQuote> historyList = history.OrderBy(x => x.Date).ToList();
+            List<PatternQuote> historyList = history.ConvertToPattern();
 
             string name = "BearishEngulfing";
             // check parameters
@@ -26,27 +26,28 @@ namespace Skender.Stock.Indicators
             // roll through history
             for (int i = 0; i < historyList.Count; i++)
             {
-                TQuote h = historyList[i];
+                PatternQuote current = historyList[i];
+                var result = new PatternResult(current.Date, name);
+                results.Add(result);
 
-                if (i >= 1)
+                if (i == 0)
                 {
-                    TQuote previous = historyList[i - 1];
-                    var firstCandle = previous.Close > previous.Open;
-                    var secondCandle = h.Close < h.Open;
-
-                    // check the first wholeCandle fitts in secondCandleBody
-                    var firstCandleHighIsLowerThanSecondCandleOpen = previous.High < h.Open;
-                    var firstCandleLowIsHigherThanSecondCandleLow = previous.Low > h.Close;
-                    if(firstCandle && secondCandle && firstCandleHighIsLowerThanSecondCandleOpen&& firstCandleLowIsHigherThanSecondCandleLow)
-                    {
-                        PatternResult result = new PatternResult(h, name)
-                        {
-                            Date = h.Date,
-                            Short = true
-                        };
-                        results.Add(result);
-                    }
+                    continue;
                 }
+
+                PatternQuote previous = historyList[i - 1];
+                var firstCandle = previous.Close > previous.Open;
+                var secondCandle = current.Close < current.Open;
+
+                // check the first wholeCandle fitts in secondCandleBody
+                var firstCandleHighIsLowerThanSecondCandleOpen = previous.High < current.Open;
+                var firstCandleLowIsHigherThanSecondCandleLow = previous.Low > current.Close;
+                if (firstCandle && secondCandle && firstCandleHighIsLowerThanSecondCandleOpen && firstCandleLowIsHigherThanSecondCandleLow)
+                {
+                    result.Point = current.High;
+                    result.Short = true;
+                }
+
             }
 
             return results;

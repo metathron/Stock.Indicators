@@ -12,13 +12,13 @@ namespace Skender.Stock.Indicators
         public static IEnumerable<PatternResult> GetGraveStoneDoji<TQuote>(
              IEnumerable<TQuote> history,
              decimal maxBodySizeInPercent = 10.0M, decimal maxLowerRegionInPercent = 10.0M)
-             where TQuote : IPatternQuote
+             where TQuote : IQuote
         {
             //https://www.youtube.com/watch?v=fY-j26ozA2w
             //if(and(abs(Open[i]-Close[i])<Close*(maxBodySizeInPercent/100), High[i]-Low[i]>Close[i]*(minimumCandleSizeInPercent/100)
 
             // clean quotes
-            List<TQuote> historyList = history.OrderBy(x => x.Date).ToList();
+            List<PatternQuote> historyList = history.ConvertToPattern();
 
             string name = "GraveStoneDoji";
             // initialize
@@ -27,7 +27,13 @@ namespace Skender.Stock.Indicators
             // roll through history
             for (int i = 0; i < historyList.Count; i++)
             {
-                TQuote current = historyList[i];
+                PatternQuote current = historyList[i];
+
+                PatternResult result = new PatternResult(current.Date, name)
+                {
+                    Date = current.Date,
+                };
+                results.Add(result);
 
                 if (IsDoji(current, maxBodySizeInPercent))
                 {
@@ -35,11 +41,7 @@ namespace Skender.Stock.Indicators
 
                     if (current.LowerWickPercent < maxLowerRegionInPercent)
                     {
-                        PatternResult result = new PatternResult(current, name)
-                        {
-                            Date = current.Date,
-                        };
-                        results.Add(result);
+                        result.Point = current.High;
                     }
                 }
             }

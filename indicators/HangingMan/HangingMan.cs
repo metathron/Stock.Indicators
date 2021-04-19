@@ -11,12 +11,14 @@ namespace Skender.Stock.Indicators
         public static IEnumerable<PatternResult> GetHangingMan<TQuote>(
             IEnumerable<TQuote> history,
             int lookbackPeriod = 3, bool shouldOpenWithASmallGap = true, decimal minimumRatioLowerToBody = 2.2M, decimal maxBodySizeInPercent = 25.0M)
-            where TQuote : IPatternQuote
+            where TQuote : IQuote
         {
             //https://en.wikipedia.org/wiki/Hanging_man_(candlestick_pattern)
             //https://tradistats.com/hanging-man-und-inverted-hammer/
             // clean quotes
-            List<TQuote> historyList = history.OrderBy(x => x.Date).ToList();
+
+
+            List<PatternQuote> historyList = history.ConvertToPattern();
 
             string name = "HangingMan";
             // check parameters
@@ -26,10 +28,17 @@ namespace Skender.Stock.Indicators
             List<PatternResult> results = new List<PatternResult>();// (historyList.Count);
 
             // roll through history
-            for (int i = 1; i < historyList.Count; i++)
+            for (int i = 0; i < historyList.Count; i++)
             {
-                TQuote current = historyList[i];
-                TQuote previous = historyList[i - 1];
+                PatternQuote current = historyList[i];
+                var result = new PatternResult(current.Date, name);
+                results.Add(result);
+
+                if (i == 0)
+                {
+                    continue;
+                }
+                PatternQuote previous = historyList[i - 1];
 
                 if (i > lookbackPeriod)
                 {
@@ -43,35 +52,29 @@ namespace Skender.Stock.Indicators
                                 //check Boby is in upper region, Upper Region is maxBodySizeInPercent plus 20%
                                 if (current.UpperWickPercent < (maxBodySizeInPercent * 1.2M))
                                 {
-                                    PatternResult result = new PatternResult(current, name)
-                                    {
-                                        Date = current.Date,
-                                        Short = true,
-                                        Confirmed = ConfiramtionType.NotConfirmableMissingData
-                                    };
+                                    result.Point = current.High;
+                                    result.Short = true;
+                                    result.Confirmed = ConfiramtionType.NotConfirmableMissingData;
+                                }
 
-                                    int nextIndex = i + 1;
-                                    //checked for confirmation
-                                    if (nextIndex < historyList.Count)
-                                    {
-                                        TQuote next = historyList[nextIndex];
-                                        //there are 2 ways, confirm if the next close ends in the lower shadow  or next opens under current close
-                                        if (next.Close < current.Close)
-                                            result.Confirmed = ConfiramtionType.Confirmed;
-                                        else
-                                            result.Confirmed = ConfiramtionType.NotConfirmed;
-                                    }
-
-
-                                    results.Add(result);
+                                int nextIndex = i + 1;
+                                //checked for confirmation
+                                if (nextIndex < historyList.Count)
+                                {
+                                    PatternQuote next = historyList[nextIndex];
+                                    //there are 2 ways, confirm if the next close ends in the lower shadow  or next opens under current close
+                                    if (next.Close < current.Close)
+                                        result.Confirmed = ConfiramtionType.Confirmed;
+                                    else
+                                        result.Confirmed = ConfiramtionType.NotConfirmed;
                                 }
                             }
                         }
                     }
                 }
             }
-
             return results;
         }
     }
 }
+

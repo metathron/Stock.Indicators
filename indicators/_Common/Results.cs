@@ -33,15 +33,16 @@ namespace Skender.Stock.Indicators
     }
     public class PatternResult : ResultBase
     {
-        public PatternResult(IPatternQuote candle, string source)
+        public PatternResult(DateTime date, string source)
         {
-            Candle = candle;
+            Date = date;
             Source = source;
         }
-        public IQuote Candle { get; set; }
+        public DateTime Date { get; set; }
+        public decimal? Point { get; set; }
         public bool Long { get; set; }
         public bool Short { get; set; }
         public string Source { get; set; }
-        public ConfiramtionType Confirmed {get;set;}
+        public ConfiramtionType Confirmed { get; set; }
     }
 }

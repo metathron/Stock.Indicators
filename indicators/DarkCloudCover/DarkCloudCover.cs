@@ -11,13 +11,13 @@ namespace Skender.Stock.Indicators
         public static IEnumerable<PatternResult> GetDarkCloudCover<TQuote>(
           IEnumerable<TQuote> history,
           int lookbackPeriod = 3, bool shouldOpenWithABigGap = true, decimal minBodySizeInPercent = 50.0M)
-          where TQuote : IPatternQuote
+          where TQuote : IQuote
         {
             //https://admiralmarkets.com/de/wissen/articles/forex-basics/alles-was-sie-uber-candlesticks-wissen-mussen
             //https://tradistats.com/dark-cloud-cover-und-piercing-pattern/
 
             // clean quotes
-            List<TQuote> historyList = history.OrderBy(x => x.Date).ToList();
+            List<PatternQuote> historyList = history.ConvertToPattern();
 
 
             string name = "DarkCloudCover";
@@ -28,10 +28,15 @@ namespace Skender.Stock.Indicators
             List<PatternResult> results = new List<PatternResult>();// (historyList.Count);
 
             // roll through history
-            for (int i = 1; i < historyList.Count; i++)
+            for (int i = 0; i < historyList.Count; i++)
             {
-                TQuote previous = historyList[i - 1];
-                TQuote current = historyList[i];
+                PatternQuote current = historyList[i];
+                PatternResult result = new PatternResult(current.Date, name);
+                results.Add(result);
+                if (i == 0)
+                    continue;
+
+                PatternQuote previous = historyList[i - 1];
                 if (previous.BodyPercent >= minBodySizeInPercent)
                     if (i > lookbackPeriod + 1)
                     {
@@ -59,19 +64,14 @@ namespace Skender.Stock.Indicators
                                                     confirmed = ConfiramtionType.NotConfirmed;
                                             }
 
-                                            PatternResult result = new PatternResult(current, name)
-                                            {
-                                                Date = current.Date,
-                                                Short = true,
-                                                Confirmed = confirmed
-                                            };
-                                            results.Add(result);
+                                            result.Point = current.High;
+                                            result.Short = true;
+                                            result.Confirmed = confirmed;
                                         }
                                     }
                             }
                         }
                     }
-
             }
 
             return results;

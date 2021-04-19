@@ -11,12 +11,12 @@ namespace Skender.Stock.Indicators
         public static IEnumerable<PatternResult> GetPiercingLine<TQuote>(
            IEnumerable<TQuote> history,
            int lookbackPeriod = 3, bool shouldOpenWithABigGap = true, decimal minBodySizeInPercent = 50.0M)
-           where TQuote : IPatternQuote
+           where TQuote : IQuote
         {
             //http://tutorials.topstockresearch.com/candlestick/Bullish/BullishPiercing/TutotrialOnBullishPiercingChartPattern.html
             //https://tradistats.com/dark-cloud-cover-und-piercing-pattern/
             // clean quotes
-            List<TQuote> historyList = history.OrderBy(x => x.Date).ToList();
+            List<PatternQuote> historyList = history.ConvertToPattern();
 
             string name = "PiercingLine";
             // check parameters
@@ -26,10 +26,18 @@ namespace Skender.Stock.Indicators
             List<PatternResult> results = new List<PatternResult>();// (historyList.Count);
 
             // roll through history
-            for (int i = 1; i < historyList.Count; i++)
+            for (int i = 0; i < historyList.Count; i++)
             {
-                TQuote previous = historyList[i - 1];
-                TQuote current = historyList[i];
+                PatternQuote current = historyList[i];
+                var result = new PatternResult(current.Date, name);
+                results.Add(result);
+
+                if (i == 0)
+                {
+                    continue;
+                }
+
+                PatternQuote previous = historyList[i - 1];
                 if (previous.BodyPercent >= minBodySizeInPercent)
                     if (i > lookbackPeriod)
                     {
@@ -54,13 +62,9 @@ namespace Skender.Stock.Indicators
                                                 confirmed = ConfiramtionType.NotConfirmed;
                                         }
 
-                                        PatternResult result = new PatternResult(current, name)
-                                        {
-                                            Date = current.Date,
-                                            Long = true,
-                                            Confirmed = confirmed
-                                        };
-                                        results.Add(result);
+                                        result.Point = current.High;
+                                        result.Long = true;
+                                        result.Confirmed = confirmed;
                                     }
                                 }
                             }

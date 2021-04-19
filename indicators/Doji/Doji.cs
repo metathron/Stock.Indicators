@@ -11,13 +11,13 @@ namespace Skender.Stock.Indicators
         //https://www.investopedia.com/terms/d/doji.asp
         public static IEnumerable<PatternResult> GetDoji<TQuote>(
          IEnumerable<TQuote> history, decimal maxBodySizeInPercent = 10.0M)
-         where TQuote : IPatternQuote
+         where TQuote : IQuote
         {
             //https://www.youtube.com/watch?v=fY-j26ozA2w
             //if(and(abs(Open[i]-Close[i])<Close*(maxBodySizeInPercent/100), High[i]-Low[i]>Close[i]*(minimumCandleSizeInPercent/100)
 
             // clean quotes
-            List<TQuote> historyList = history.OrderBy(x => x.Date).ToList();
+            List<PatternQuote> historyList = history.ConvertToPattern();
 
             string name = "LeggedDoji";
             // initialize
@@ -26,23 +26,19 @@ namespace Skender.Stock.Indicators
             // roll through history
             for (int i = 0; i < historyList.Count; i++)
             {
-                TQuote current = historyList[i];
-
+                PatternQuote current = historyList[i];
+                PatternResult result = new PatternResult(current.Date, name);
+                results.Add(result);
                 //Is in range for Long-Legged
                 if (IsDoji(current, maxBodySizeInPercent))
                 {
-                    PatternResult result = new PatternResult(current, name)
-                    {
-                        Date = current.Date,
-                    };
-                    results.Add(result);
+                    result.Point = current.High;
                 }
-
             }
 
             return results;
         }
-        internal static bool IsDoji<TQuote>(TQuote h, decimal maxBodySizeInPercent = 10.0M) where TQuote : IPatternQuote
+        internal static bool IsDoji(PatternQuote h, decimal maxBodySizeInPercent = 10.0M)
         {
             bool result = false;
 

@@ -26,7 +26,7 @@ namespace Skender.Stock.Indicators
             = EnglishCulture.DateTimeFormat.FirstDayOfWeek;
 
 
-        private static void ValidateDataForPattern<TQuote>(IEnumerable<TQuote> history, int lookbackPeriod, string name) where TQuote : IPatternQuote
+        private static void ValidateDataForPattern<TQuote>(IEnumerable<TQuote> history, int lookbackPeriod, string name) where TQuote : IQuote
         {
 
             // check parameters
@@ -49,7 +49,7 @@ namespace Skender.Stock.Indicators
             }
 
         }
-        private static bool IsInUptrend<TQuote>(IList<TQuote> enumerable) where TQuote : IPatternQuote
+        private static bool IsInUptrend<TQuote>(IList<TQuote> enumerable) where TQuote : IQuote
         {
             bool result = false;
             if (enumerable.Count > 1)
@@ -61,7 +61,7 @@ namespace Skender.Stock.Indicators
                 }
             return result;
         }
-        private static bool IsInDowntrend<TQuote>(IList<TQuote> enumerable) where TQuote : IPatternQuote
+        private static bool IsInDowntrend<TQuote>(IList<TQuote> enumerable) where TQuote : IQuote
         {
             bool result = false;
             if (enumerable.Count > 1)

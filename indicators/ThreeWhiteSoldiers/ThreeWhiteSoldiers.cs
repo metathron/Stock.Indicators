@@ -10,12 +10,12 @@ namespace Skender.Stock.Indicators
     {
         public static IEnumerable<PatternResult> GetThreeWhiteSoldiers<TQuote>(
         IEnumerable<TQuote> history, decimal minimunBodyInPercent = 50.0M)
-        where TQuote : IPatternQuote
+        where TQuote : IQuote
         {
             //https://www.investopedia.com/terms/t/three_black_crows.asp
             int lookbackPeriod = 3;
             // clean quotes
-            List<TQuote> historyList = history.OrderBy(x => x.Date).ToList();
+            List<PatternQuote> historyList = history.ConvertToPattern();
 
             string name = "ThreeWhiteSoldiers";
             // check parameters
@@ -27,21 +27,19 @@ namespace Skender.Stock.Indicators
             // roll through history
             for (int i = 0; i < historyList.Count; i++)
             {
-                TQuote h = historyList[i];
+                PatternQuote current = historyList[i];
+                var result = new PatternResult(current.Date, name);
+                results.Add(result);
                 if (i > lookbackPeriod)
                 {
                     var previousCandles = historyList.Skip(i - (lookbackPeriod)).Take(lookbackPeriod).ToList();
                     if (AllCandlesBullish(previousCandles, minimunBodyInPercent))
                     {
                         var lastCandle = historyList[i - 1];
-                        if (lastCandle.Close < h.Close)
+                        if (lastCandle.Close < current.Close)
                         {
-                            PatternResult result = new PatternResult(h, name)
-                            {
-                                Date = h.Date,
-                                Long = true
-                            };
-                            results.Add(result);
+                            result.Point = current.High;
+                            result.Long = true;
                         }
                     }
                 }

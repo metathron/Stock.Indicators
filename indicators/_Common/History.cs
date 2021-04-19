@@ -50,7 +50,7 @@ namespace Skender.Stock.Indicators
     }
 
     [Serializable]
-    public class PatternQuote : Quote, IPatternQuote
+    internal class PatternQuote : Quote, IPatternQuote
     {
 
         public decimal UpperWickSize
@@ -193,6 +193,28 @@ namespace Skender.Stock.Indicators
             return bdList == null || bdList.Count == 0
                 ? throw new BadHistoryException(nameof(history), "No historical quotes provided.")
                 : bdList;
+        }
+        internal static List<PatternQuote> ConvertToPattern<TQuote>(
+           this IEnumerable<TQuote> history)
+           where TQuote : IQuote
+        {
+            // elements represents the targeted OHLCV parts, so use "O" to return <Open> as base data, etc.
+            // convert to basic data format
+            List<PatternQuote> patternData = history.Select(x => new PatternQuote()
+            {
+                Date = x.Date,
+                Close = x.Close,
+                High = x.High,
+                Low = x.Low,
+                Open = x.Open,
+                Volume = x.Volume
+            }).Sort();
+
+
+            // validate
+            return patternData == null || patternData.Count == 0
+                ? throw new BadHistoryException(nameof(history), "No historical quotes provided.")
+                : patternData;
         }
     }
 

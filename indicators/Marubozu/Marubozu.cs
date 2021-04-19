@@ -10,11 +10,11 @@ namespace Skender.Stock.Indicators
         public static IEnumerable<PatternResult> GetMarubozu<TQuote>(
      IEnumerable<TQuote> history,
      decimal minBodySizeInPercent = 60.0M)
-     where TQuote : IPatternQuote
+     where TQuote : IQuote
         {
 
             // clean quotes
-            List<TQuote> historyList = history.OrderBy(x => x.Date).ToList();
+            List<PatternQuote> historyList = history.ConvertToPattern();
 
             // initialize
             List<PatternResult> results = new List<PatternResult>();
@@ -23,43 +23,42 @@ namespace Skender.Stock.Indicators
             for (int i = 0; i < historyList.Count; i++)
             {
                 string name = "";
-                TQuote h = historyList[i];
+                PatternQuote current = historyList[i];
 
+                PatternResult result = new PatternResult(current.Date, name);
+                results.Add(result);
                 //Is in range for Long-Legged
-                if (h.BodyPercent > minBodySizeInPercent)
+                if (current.BodyPercent > minBodySizeInPercent)
                 {
-                    if (h.Open == h.High && h.Close != h.Low)
+                    if (current.Open == current.High && current.Close != current.Low)
                     {
                         name = "Marubozu open bearish";
                     }
-                    if (h.Open == h.Low && h.Close != h.High)
+                    if (current.Open == current.Low && current.Close != current.High)
                     {
                         name = "Marubozu open bullish";
                     }
-                    if (h.Close == h.Low && h.Open != h.High)
+                    if (current.Close == current.Low && current.Open != current.High)
                     {
                         name = "Marubozu close bearish";
                     }
-                    if (h.Close == h.High && h.Open != h.Low)
+                    if (current.Close == current.High && current.Open != current.Low)
                     {
                         name = "Marubozu close bullish";
                     }
 
-                    if (h.Open == h.Low && h.Close == h.High)
+                    if (current.Open == current.Low && current.Close == current.High)
                     {
                         name = "Marubozu full bullish";
                     }
-                    if (h.Open == h.High && h.Close == h.Low)
+                    if (current.Open == current.High && current.Close == current.Low)
                     {
                         name = "Marubozu full bearish";
                     }
-                    if (!String.IsNullOrEmpty(name))
+                    if (!String.IsNullOrWhiteSpace(name))
                     {
-                        PatternResult result = new PatternResult(h, name)
-                        {
-                            Date = h.Date
-                        };
-                        results.Add(result);
+                        result.Point = current.High;
+                        result.Source = name;
                     }
                 }
 
